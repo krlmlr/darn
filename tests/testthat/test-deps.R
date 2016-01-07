@@ -1,23 +1,25 @@
 context("deps")
 
 test_that("parsing", {
-  expect_warning(parsed <- parse_script(dir("simple", full.names = TRUE)), NA)
+  withr::with_dir("simple", {
+    expect_warning(parsed <- parse_script(dir()), NA)
 
-  A <- parsed[["simple/A.R"]]
-  expect_identical(A$path, normalizePath("simple/A.R"))
-  expect_identical(A$init, list(deps = NULL))
-  expect_identical(A$done, list(
-    names = "fortytwo"
-  ))
+    A <- parsed[["A.R"]]
+    expect_identical(A$path, normalizePath("A.R"))
+    expect_identical(A$init, list(deps = NULL))
+    expect_identical(A$done, list(
+      names = "fortytwo"
+    ))
 
-  B <- parsed[["simple/B.R"]]
-  expect_identical(B$path, normalizePath("simple/B.R"))
-  expect_identical(B$init, list(
-    deps = list(
-      A = NULL
-    )
-  ))
-  expect_identical(B$done, list(
-    names = "twentyone"
-  ))
+    B <- parsed[["B.R"]]
+    expect_identical(B$path, normalizePath("B.R"))
+    expect_identical(B$init, list(
+      deps = list(
+        A = NULL
+      )
+    ))
+    expect_identical(B$done, list(
+      names = "twentyone"
+    ))
+  })
 })
