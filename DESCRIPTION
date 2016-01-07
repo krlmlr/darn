@@ -1,6 +1,6 @@
 Package: darg
 Title: Directed Acyclic R Script Graphs
-Version: 0.0-0
+Version: 0.0-1
 Date: 2016-01-07
 Authors@R: as.person("Kirill Müller <krlmlr+r@mailbox.org> [aut, cre]")
 Description: Data pipelines made of R scripts
@@ -18,4 +18,3 @@ Collate:
     'config.R'
     'process.R'
     'root.R'
-    'zzz-autoroxy.R'
