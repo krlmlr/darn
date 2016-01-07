@@ -1,10 +1,9 @@
-Package: drag
-Title: What the Package Does (one line, title case)
+Package: darg
+Title: Directed Acyclic R Script Graphs
 Version: 0.0-0
 Authors@R: as.person("Kirill Müller <krlmlr+r@mailbox.org> [aut, cre]")
-Description: What the package does (one paragraph).
-Depends: R (>= 3.2.3)
+Description: Data pipelines made of R scripts
 License: GPL-3
 LazyData: true
 Encoding: UTF-8
-GitHub: https://github.com/krlmlr/
+GitHub: https://github.com/krlmlr/darg
