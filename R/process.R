@@ -18,14 +18,14 @@ init_ <- function(..., .dots = NULL, envir = parent.frame()) {
   target_dir <- dirname(path)
   file_base <- gsub("[.][^.]*", "", basename(path))
 
-  dots <- lazyeval::all_dots(.dots, ...)
-  deps_list <- get_deps_list(dots)
+  deps_list <- get_init_deps_list(.dots, ...)
 
   mapply(init_one, names(deps_list), deps_list, MoreArgs = list(
     source_dir = source_dir, target_dir = target_dir, envir = envir))
 }
 
-get_deps_list <- function(dots) {
+get_init_deps_list <- function(.dots, ...) {
+  dots <- lazyeval::all_dots(.dots, ...)
   vals <- lazyeval::lazy_eval(dots)
 
   if (is.null(names(vals))) {
@@ -39,9 +39,7 @@ get_deps_list <- function(dots) {
   deps <- unlist(vals)
   deps_list <- vector("list", length(deps))
   names(deps_list) <- deps
-
-  mapply(init_one, names(deps_list), deps_list, MoreArgs = list(
-    source_dir = source_dir, target_dir = target_dir, envir = envir))
+  deps_list
 }
 
 init_one <- function(file_base, deps, source_dir, target_dir, envir) {
@@ -91,11 +89,15 @@ done_ <- function(..., .dots = NULL, .compress = FALSE) {
   target_dir <- dirname(path)
   file_base <- gsub("[.][^.]*", "", basename(path))
 
-  dots <- lazyeval::all_dots(.dots, ..., all_named = TRUE)
+  dots <- get_done_dots(.dots, ...)
   vals <- lazyeval::lazy_eval(dots)
 
   tools:::makeLazyLoadDB(vals, file.path(target_dir, file_base),
                          compress = .compress)
+}
+
+get_done_dots <- function(.dots, ...) {
+  lazyeval::all_dots(.dots, ..., all_named = TRUE)
 }
 
 #' @export
