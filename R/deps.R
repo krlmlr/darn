@@ -28,16 +28,26 @@ parse_script <- function(path) {
     done_call_idx <- done_call_idx[length(done_call_idx)]
   }
 
+  deps <- lapply(
+    exprs[init_call_idx],
+    function(init_call) {
+      init_call[[1]] <- quote(lazyeval::lazy_dots)
+      get_init_deps_list(eval(init_call))
+    }
+  )
+
   done <- if (length(done_call_idx) > 0L) {
     done_call <- exprs[[done_call_idx]]
     done_call[[1]] <- quote(lazyeval::lazy_dots)
-    done_lazy_dots <- eval(done_call)
-    done_lazy <- lazyeval::all_dots(done_lazy_dots, all_named = TRUE)
+    done_lazy <- get_done_dots(eval(done_call))
     list(names = names(done_lazy))
   }
 
   list(
     path = normalizePath(path),
+    init = list(
+      deps = unlist(deps, recursive = FALSE)
+    ),
     done = done
   )
 }
