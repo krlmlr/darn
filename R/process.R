@@ -21,7 +21,7 @@ done_ <- function(..., .dots = NULL, .compress = FALSE) {
   dots <- lazyeval::all_dots(.dots, ..., all_named = TRUE)
   vals <- lazyeval::lazy_eval(dots)
 
-  tools:::makeLazyLoadDB(dots, file.path(target_dir, file_base),
+  tools:::makeLazyLoadDB(vals, file.path(target_dir, file_base),
                          compress = .compress)
 }
 
