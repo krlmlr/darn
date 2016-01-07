@@ -11,6 +11,7 @@ NULL
 #' @export
 #' @param .dots \code{list}\cr
 #'   Additional dependencies as list
+#' @rdname init
 init_ <- function(..., .dots = NULL, envir = parent.frame()) {
   path <- kimisc::thisfile()
   source_dir <- dirname(path)
@@ -74,6 +75,7 @@ NULL
 #'   Additional objects as list
 #' @param .compress \code{logical(1)}\cr
 #'   Compress output (default: \code{FALSE})
+#' @rdname done
 done_ <- function(..., .dots = NULL, .compress = FALSE) {
   path <- kimisc::thisfile()
   target_dir <- dirname(path)

@@ -2,9 +2,16 @@
 % Please edit documentation in R/process.R
 \name{init}
 \alias{init}
+\alias{init_}
 \title{Init a stage}
+\usage{
+init_(..., .dots = NULL, envir = parent.frame())
+}
 \arguments{
 \item{...}{Dependencies}
+
+\item{.dots}{\code{list}\cr
+Additional dependencies as list}
 }
 \description{
 Add a call to this functions as first statement to each of your scripts,
