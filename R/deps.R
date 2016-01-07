@@ -1,4 +1,9 @@
 parse_script <- function(path) {
+  names(path) <- path
+  lapply(path, parse_script_one)
+}
+
+parse_script_one <- function(path) {
   exprs <- parse(path)
   darg_calls <- vapply(
     exprs,
