@@ -1,3 +1,10 @@
+get_deps <- function(path) {
+  parsed <- parse_script(path)
+  init <- lapply(parsed, "[[", "init")
+  deps <- lapply(init, "[[", "deps")
+  deps
+}
+
 parse_script <- function(path) {
   names(path) <- path
   lapply(path, parse_script_one)

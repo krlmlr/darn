@@ -23,3 +23,12 @@ test_that("parsing", {
     ))
   })
 })
+
+test_that("deps", {
+  withr::with_dir("simple", {
+    expect_identical(
+      get_deps(dir()),
+      list("A.R" = NULL, "B.R" = list("A.R" = NULL))
+    )
+  })
+})
