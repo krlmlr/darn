@@ -40,6 +40,7 @@ parse_script_one <- function(path) {
       get_init_deps_list(eval(init_call))
     }
   )
+  deps <- unlist(deps, recursive = FALSE)
 
   done <- if (length(done_call_idx) > 0L) {
     done_call <- exprs[[done_call_idx]]
@@ -51,7 +52,7 @@ parse_script_one <- function(path) {
   list(
     path = normalizePath(path),
     init = list(
-      deps = unlist(deps, recursive = FALSE)
+      deps = deps
     ),
     done = done
   )
