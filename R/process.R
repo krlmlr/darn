@@ -30,11 +30,14 @@ init_ <- function(..., .dots = NULL, envir = parent.frame()) {
   }
 
   deps <- unlist(vals)
-  lapply(vals, init_one, source_dir = source_dir, target_dir = target_dir,
-         envir = envir)
+  deps_list <- vector("list", length(deps))
+  names(deps_list) <- deps
+
+  mapply(init_one, names(deps_list), deps_list, MoreArgs = list(
+    source_dir = source_dir, target_dir = target_dir, envir = envir))
 }
 
-init_one <- function(file_base, source_dir, target_dir, envir) {
+init_one <- function(file_base, deps, source_dir, target_dir, envir) {
   r_file <- file.path(source_dir, sprintf("%s.R", file_base))
 
   rdx_base <- file.path(target_dir, file_base)
