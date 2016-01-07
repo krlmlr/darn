@@ -7,3 +7,6 @@ License: GPL-3
 LazyData: true
 Encoding: UTF-8
 GitHub: https://github.com/krlmlr/darg
+Imports:
+    rprojroot
+RoxygenNote: 5.0.1.9000
