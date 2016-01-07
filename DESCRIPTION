@@ -19,4 +19,5 @@ Collate:
     'deps.R'
     'process.R'
     'root.R'
+    'utils.R'
     'zzz-autoroxy.R'
