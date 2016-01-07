@@ -19,6 +19,13 @@ init_ <- function(..., .dots = NULL, envir = parent.frame()) {
   file_base <- gsub("[.][^.]*", "", basename(path))
 
   dots <- lazyeval::all_dots(.dots, ...)
+  deps_list <- get_deps_list(dots)
+
+  mapply(init_one, names(deps_list), deps_list, MoreArgs = list(
+    source_dir = source_dir, target_dir = target_dir, envir = envir))
+}
+
+get_deps_list <- function(dots) {
   vals <- lazyeval::lazy_eval(dots)
 
   if (is.null(names(vals))) {
