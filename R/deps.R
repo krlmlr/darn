@@ -1,7 +1,15 @@
 get_deps <- function(path) {
   parsed <- parse_script(path)
-  init <- lapply(parsed, "[[", "init")
-  deps <- lapply(init, "[[", "deps")
+  deps <- lapply(parsed, get_deps_one)
+}
+
+get_deps_one <- function(parsed_one) {
+  path <- dirname(parsed_one[["path"]])
+  deps <- parsed_one[["init"]][["deps"]]
+  if (is.null(deps)) {
+    return(NULL)
+  }
+  names(deps) <- R.utils::getRelativePath(file.path(path, names(deps)), ".")
   deps
 }
 

@@ -10,7 +10,8 @@ Encoding: UTF-8
 GitHub: https://github.com/krlmlr/darg
 Imports:
     rprojroot,
-    kimisc
+    kimisc,
+    R.utils
 Suggests:
     testthat
 RoxygenNote: 5.0.1.9000
