@@ -32,3 +32,10 @@ test_that("deps", {
     )
   })
 })
+
+test_that("deps in subdir", {
+  expect_identical(
+    get_deps(dir("simple", full.names = TRUE)),
+    list("simple/A.R" = NULL, "simple/B.R" = list("simple/A.R" = NULL))
+  )
+})
