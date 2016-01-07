@@ -15,7 +15,7 @@ test_that("parsing", {
     expect_identical(B$path, normalizePath("B.R"))
     expect_identical(B$init, list(
       deps = list(
-        A = NULL
+        A.R = NULL
       )
     ))
     expect_identical(B$done, list(
