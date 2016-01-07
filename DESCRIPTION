@@ -1,6 +1,7 @@
 Package: darg
 Title: Directed Acyclic R Script Graphs
-Version: 0.0-0
+Version: 0.0-1
+Date: 2016-01-07
 Authors@R: as.person("Kirill Müller <krlmlr+r@mailbox.org> [aut, cre]")
 Description: Data pipelines made of R scripts
 License: GPL-3
@@ -8,8 +9,12 @@ LazyData: true
 Encoding: UTF-8
 GitHub: https://github.com/krlmlr/darg
 Imports:
-    rprojroot
+    rprojroot,
+    kimisc
+Suggests:
+    testthat
 RoxygenNote: 5.0.1.9000
 Collate:
     'config.R'
+    'process.R'
     'root.R'
