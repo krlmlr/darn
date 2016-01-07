@@ -2,4 +2,6 @@
 
 export(done)
 export(done_)
+export(init)
+export(init_)
 importFrom(utils,glob2rx)
