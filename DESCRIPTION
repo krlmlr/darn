@@ -9,13 +9,24 @@ LazyData: true
 Encoding: UTF-8
 GitHub: https://github.com/krlmlr/darg
 Imports:
+    lazyeval,
+    lazyforward,
     rprojroot,
-    kimisc
+    kimisc,
+    R.utils,
+    MakefileR,
+    purrr
 Suggests:
-    testthat
+    testthat,
+    withr,
+    devtools,
+    rmarkdown
 RoxygenNote: 5.0.1.9000
 Collate:
     'config.R'
+    'deps.R'
+    'make.R'
     'process.R'
     'root.R'
+    'utils.R'
     'zzz-autoroxy.R'
