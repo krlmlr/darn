@@ -1,4 +1,5 @@
 R_FILE_PATTERN <- "[.][rR]$"
+R_FILE_TARGETS <- c("%.R", "%.r")
 
 PACKAGE_NAME <- unname(read.dcf("DESCRIPTION")[1L, "Package"])
 
