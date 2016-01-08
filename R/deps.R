@@ -25,7 +25,7 @@ create_deps_rules <- function(root_dir, relative_to = root_dir) {
   purrr::reduce(purrr::compact(rules), `+`, .init = MakefileR::makefile())
 }
 
-get_deps <- function(path, relative_to) {
+get_deps <- function(path, relative_to = ".") {
   parsed <- parse_script(path)
   names(parsed) <- R.utils::getRelativePath(names(parsed), relative_to)
   lapply(parsed, get_deps_one, relative_to = relative_to)
