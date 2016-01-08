@@ -22,7 +22,11 @@ create_deps_rules <- function(root_dir, relative_to = root_dir) {
     names(deps), deps
   )
 
-  purrr::reduce(purrr::compact(rules), `+`, .init = MakefileR::makefile())
+  init <-
+    MakefileR::makefile() +
+    MakefileR::make_rule("all", rdx_from_r(names(deps)))
+
+  purrr::reduce(purrr::compact(rules), `+`, .init = init)
 }
 
 rdx_from_r <- function(path, relative_to) {

@@ -42,11 +42,13 @@ test_that("deps in subdir", {
 
 test_that("dep rules", {
   rules <- create_deps_rules("simple")
+  expect_true(any(grepl("all: A[.]rdx B[.]rdx", format(rules))))
   expect_true(any(grepl("B[.]rdx: A[.]rdx", format(rules))))
 })
 
 test_that("dep rules in subdir", {
   rules <- create_deps_rules("simple", ".")
+  expect_true(any(grepl("all: simple/A[.]rdx simple/B[.]rdx", format(rules))))
   expect_true(any(grepl("simple/B[.]rdx: simple/A[.]rdx", format(rules))))
 })
 
@@ -54,5 +56,6 @@ test_that("dep file, by default into file named Dependencies", {
   f <- setup_scenario("simple")
   create_dep_file(f())
   dep_contents <- readLines(f("Dependencies"))
+  expect_true(any(grepl("all: A[.]rdx B[.]rdx", dep_contents)))
   expect_true(any(grepl("B[.]rdx: A[.]rdx", dep_contents)))
 })
