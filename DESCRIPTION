@@ -29,3 +29,4 @@ Collate:
     'process.R'
     'root.R'
     'utils.R'
+    'zzz-autoroxy.R'
