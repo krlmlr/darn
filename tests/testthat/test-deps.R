@@ -39,3 +39,8 @@ test_that("deps in subdir", {
     list("simple/A.R" = NULL, "simple/B.R" = list("simple/A.R" = NULL))
   )
 })
+
+test_that("dep rules", {
+  rules <- create_deps_rules("simple")
+  expect_true(any(grepl("simple/B[.]R: simple/A[.]R", format(rules))))
+})

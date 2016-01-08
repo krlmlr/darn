@@ -1,3 +1,16 @@
+create_deps_rules <- function(root_dir) {
+  deps <- get_deps(dir(root_dir, full.names = TRUE))
+  rules <- mapply(
+    function(target, dep) {
+      if (!is.null(dep))
+        MakefileR::make_rule(target, names(dep))
+      },
+    names(deps), deps
+  )
+
+  purrr::reduce(purrr::compact(rules), `+`, .init = MakefileR::makefile())
+}
+
 get_deps <- function(path) {
   parsed <- parse_script(path)
   deps <- lapply(parsed, get_deps_one)
