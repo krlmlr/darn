@@ -1,5 +1,5 @@
 create_deps_rules <- function(root_dir) {
-  deps <- get_deps(dir(root_dir, full.names = TRUE))
+  deps <- get_deps(dir(root_dir, full.names = TRUE), relative_to = root_dir)
   rules <- mapply(
     function(target, dep) {
       if (!is.null(dep))
@@ -11,18 +11,19 @@ create_deps_rules <- function(root_dir) {
   purrr::reduce(purrr::compact(rules), `+`, .init = MakefileR::makefile())
 }
 
-get_deps <- function(path) {
+get_deps <- function(path, relative_to) {
   parsed <- parse_script(path)
-  deps <- lapply(parsed, get_deps_one)
+  names(parsed) <- R.utils::getRelativePath(names(parsed), relative_to)
+  lapply(parsed, get_deps_one, relative_to = relative_to)
 }
 
-get_deps_one <- function(parsed_one) {
+get_deps_one <- function(parsed_one, relative_to) {
   path <- dirname(parsed_one[["path"]])
   deps <- parsed_one[["init"]][["deps"]]
   if (is.null(deps)) {
     return(NULL)
   }
-  names(deps) <- R.utils::getRelativePath(file.path(path, names(deps)), ".")
+  names(deps) <- R.utils::getRelativePath(file.path(path, names(deps)), relative_to)
   deps
 }
 
