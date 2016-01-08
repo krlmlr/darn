@@ -12,8 +12,8 @@ create_dep_file <- function(root_dir, file_name = "Dependencies") {
   writeLines(format(deps_file), file.path(root_dir, file_name))
 }
 
-create_deps_rules <- function(root_dir) {
-  deps <- get_deps(dir(root_dir, full.names = TRUE), relative_to = root_dir)
+create_deps_rules <- function(root_dir, relative_to = root_dir) {
+  deps <- get_deps(dir(root_dir, full.names = TRUE), relative_to = relative_to)
   rules <- mapply(
     function(target, dep) {
       if (!is.null(dep))
