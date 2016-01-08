@@ -17,12 +17,16 @@ create_deps_rules <- function(root_dir, relative_to = root_dir) {
   rules <- mapply(
     function(target, dep) {
       if (!is.null(dep))
-        MakefileR::make_rule(target, names(dep))
+        MakefileR::make_rule(rdx_from_r(target), rdx_from_r(names(dep)))
       },
     names(deps), deps
   )
 
   purrr::reduce(purrr::compact(rules), `+`, .init = MakefileR::makefile())
+}
+
+rdx_from_r <- function(path, relative_to) {
+  gsub("[.][rR]$", ".rdx", path)
 }
 
 get_deps <- function(path, relative_to = ".") {
