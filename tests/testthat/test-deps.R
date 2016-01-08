@@ -44,3 +44,10 @@ test_that("dep rules", {
   rules <- create_deps_rules("simple")
   expect_true(any(grepl("simple/B[.]R: simple/A[.]R", format(rules))))
 })
+
+test_that("dep file, by default into file named Dependencies", {
+  f <- setup_scenario("simple")
+  create_dep_file(f())
+  dep_contents <- readLines(f("Dependencies"))
+  expect_true(any(grepl("B[.]R: A[.]R", dep_contents)))
+})

@@ -1,3 +1,17 @@
+#' Create dependencies file
+#'
+#' This function collects dependency information for all scripts below the
+#' root directory, and writes a \code{make}-compatible dependencies file.
+#'
+#' @param root_dir \code{character[1]}\cr The root directory
+#' @param file_name \code{character[1]}\cr File path (relative to the root
+#'   directory), default: \code{Dependencies}
+#' @export
+create_dep_file <- function(root_dir, file_name = "Dependencies") {
+  deps_file <- create_deps_rules(root_dir)
+  writeLines(format(deps_file), file.path(root_dir, file_name))
+}
+
 create_deps_rules <- function(root_dir) {
   deps <- get_deps(dir(root_dir, full.names = TRUE), relative_to = root_dir)
   rules <- mapply(
