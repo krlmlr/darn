@@ -18,6 +18,13 @@ init_ <- function(..., .dots = NULL, envir = parent.frame()) {
   target_dir <- dirname(path)
   file_base <- gsub("[.][^.]*", "", basename(path))
 
+  deps_list <- get_init_deps_list(.dots, ...)
+
+  mapply(init_one, names(deps_list), deps_list, MoreArgs = list(
+    source_dir = source_dir, target_dir = target_dir, envir = envir))
+}
+
+get_init_deps_list <- function(.dots, ...) {
   dots <- lazyeval::all_dots(.dots, ...)
   vals <- lazyeval::lazy_eval(dots)
 
@@ -30,12 +37,15 @@ init_ <- function(..., .dots = NULL, envir = parent.frame()) {
   }
 
   deps <- unlist(vals)
-  lapply(vals, init_one, source_dir = source_dir, target_dir = target_dir,
-         envir = envir)
+  deps_list <- vector("list", length(deps))
+  names(deps_list) <- paste0(deps, ".R")
+
+  deps_list
 }
 
-init_one <- function(file_base, source_dir, target_dir, envir) {
-  r_file <- file.path(source_dir, sprintf("%s.R", file_base))
+init_one <- function(r_file_name, deps, source_dir, target_dir, envir) {
+  r_file <- file.path(source_dir, r_file_name)
+  file_base <- strip_extension(r_file_name)
 
   rdx_base <- file.path(target_dir, file_base)
   rdx_file <- sprintf("%s.rdx", rdx_base)
@@ -79,13 +89,17 @@ NULL
 done_ <- function(..., .dots = NULL, .compress = FALSE) {
   path <- kimisc::thisfile()
   target_dir <- dirname(path)
-  file_base <- gsub("[.][^.]*", "", basename(path))
+  file_base <- strip_extension(basename(path))
 
-  dots <- lazyeval::all_dots(.dots, ..., all_named = TRUE)
+  dots <- get_done_dots(.dots, ...)
   vals <- lazyeval::lazy_eval(dots)
 
   tools:::makeLazyLoadDB(vals, file.path(target_dir, file_base),
                          compress = .compress)
+}
+
+get_done_dots <- function(.dots, ...) {
+  lazyeval::all_dots(.dots, ..., all_named = TRUE)
 }
 
 #' @export

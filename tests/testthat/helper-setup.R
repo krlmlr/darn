@@ -5,3 +5,7 @@ setup_scenario <- function(path) {
   path_base <- basename(path)
   eval(bquote(function(...) file.path(.(target), .(path_base), ...)))
 }
+
+run_make <- function(...) {
+  system2("make", args = c(...), stdout = NULL, stderr = NULL)
+}
