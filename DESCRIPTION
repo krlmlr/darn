@@ -9,6 +9,8 @@ LazyData: true
 Encoding: UTF-8
 GitHub: https://github.com/krlmlr/darg
 Imports:
+    lazyeval,
+    lazyforward,
     rprojroot,
     kimisc,
     R.utils,
@@ -16,6 +18,8 @@ Imports:
     purrr
 Suggests:
     testthat,
+    withr,
+    devtools,
     rmarkdown
 RoxygenNote: 5.0.1.9000
 Collate:
