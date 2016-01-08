@@ -11,7 +11,9 @@ GitHub: https://github.com/krlmlr/darg
 Imports:
     rprojroot,
     kimisc,
-    R.utils
+    R.utils,
+    MakefileR,
+    purrr
 Suggests:
     testthat
 RoxygenNote: 5.0.1.9000
