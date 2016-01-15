@@ -1,5 +1,5 @@
 setup_scenario <- function(path) {
-  target <- file.path(tempfile("darg"))
+  target <- file.path(tempfile("darn"))
   dir.create(target)
   file.copy(path, target, recursive = TRUE)
   path_base <- basename(path)

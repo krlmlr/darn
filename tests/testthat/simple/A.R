@@ -2,4 +2,4 @@
 
 fortytwo <- 42
 
-darg::done(fortytwo)
+darn::done(fortytwo)
