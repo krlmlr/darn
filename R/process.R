@@ -1,7 +1,7 @@
 #' Init a stage
 #'
 #' Add a call to this functions as first statement to each of your scripts,
-#' using double-colon notation (\code{darg::init()}).  A script without such a
+#' using double-colon notation (\code{darn::init()}).  A script without such a
 #' call is considered to have no dependencies.
 #'
 #' @param ... Dependencies
@@ -72,7 +72,7 @@ init <- lazyforward::lazyforward("init_")
 #' Write the results of a stage
 #'
 #' Add a call to this functions as last statement to each of your scripts,
-#' using double-colon notation (\code{darg::done()}).  A script without such a
+#' using double-colon notation (\code{darn::done()}).  A script without such a
 #' call is considered to have no output and cannot be a dependency of another
 #' script.
 #'

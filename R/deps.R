@@ -57,7 +57,7 @@ parse_script <- function(path) {
 
 parse_script_one <- function(path) {
   exprs <- parse(path)
-  darg_calls <- vapply(
+  darn_calls <- vapply(
     exprs,
     function(x) {
       if (is.call(x)) {
@@ -73,8 +73,8 @@ parse_script_one <- function(path) {
     character(1L)
   )
 
-  init_call_idx <- which(darg_calls == "init")
-  done_call_idx <- which(darg_calls == "done")
+  init_call_idx <- which(darn_calls == "init")
+  done_call_idx <- which(darn_calls == "done")
 
   if (length(done_call_idx) == 0L) {
     warning("No call to done() found, ", path,

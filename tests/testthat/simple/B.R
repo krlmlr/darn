@@ -1,4 +1,4 @@
 # Single dependency
-darg::init("A")
+darn::init("A")
 
-darg::done(twentyone = fortytwo / 2)
+darn::done(twentyone = fortytwo / 2)
