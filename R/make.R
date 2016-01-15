@@ -15,11 +15,17 @@ create_makefile <- function(root_dir, file_name = "Makefile",
                             dep_file_name = "Dependencies", out_dir = ".") {
   out_dir <- R.utils::getRelativePath(file.path(root_dir, out_dir), root_dir)
 
-  make_file <-
+  config_file <-
     MakefileR::makefile() +
     MakefileR::make_comment("This section contains the configuration of the R script network") +
     MakefileR::make_def("dep_file_name", dep_file_name) +
-    MakefileR::make_def("out_dir", out_dir) +
+    MakefileR::make_def("out_dir", out_dir)
+
+  MakefileR::write_makefile(config_file, file.path(root_dir, CONFIG_FILE_NAME))
+
+  make_file <-
+    MakefileR::makefile() +
+    MakefileR::make_text(paste0("include ", CONFIG_FILE_NAME)) +
 
     MakefileR::make_comment("This makes sure that the dependencies are created initially, and updated with each invocation") +
     MakefileR::make_rule(R_FILE_TARGETS, "${dep_file_name}") +
