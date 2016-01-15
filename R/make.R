@@ -27,7 +27,7 @@ create_makefile <- function(root_dir, file_name = "Makefile",
       paste0("Rscript -e \"", PACKAGE_NAME, "::create_dep_file('.', '$@')\"")) +
 
     MakefileR::make_comment("This defines the dependencies between the R scripts") +
-    MakefileR::make_text(paste0("include ${dep_file_name}")) +
+    MakefileR::make_text("include ${dep_file_name}") +
 
     MakefileR::make_comment("This defines the actual processing logic") +
     purrr::reduce(
