@@ -2,7 +2,7 @@ context("deps")
 
 test_that("parsing", {
   withr::with_dir("simple", {
-    expect_warning(parsed <- parse_script(dir()), NA)
+    expect_warning(parsed <- parse_script(dir(pattern = "[.][rR]$")), NA)
 
     A <- parsed[["A.R"]]
     expect_identical(A$path, normalizePath("A.R"))
@@ -27,7 +27,7 @@ test_that("parsing", {
 test_that("deps", {
   withr::with_dir("simple", {
     expect_identical(
-      get_deps(dir()),
+      get_deps(dir(pattern = "[.][rR]$")),
       list("A.R" = NULL, "B.R" = list("A.R" = NULL))
     )
   })
@@ -35,7 +35,7 @@ test_that("deps", {
 
 test_that("deps in subdir", {
   expect_identical(
-    get_deps(dir("simple", full.names = TRUE)),
+    get_deps(dir("simple", pattern = "[.][rR]$", full.names = TRUE)),
     list("simple/A.R" = NULL, "simple/B.R" = list("simple/A.R" = NULL))
   )
 })
