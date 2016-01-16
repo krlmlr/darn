@@ -1,5 +1,10 @@
 context("make")
 
+if (
+  TRUE
+  && FALSE
+  ) {
+
 withr::with_temp_libpaths({
   devtools::install(dependencies = FALSE, upgrade_dependencies = FALSE, quiet = TRUE)
   expect_null(NULL)
@@ -17,3 +22,5 @@ withr::with_temp_libpaths({
     expect_true(file.exists(f("B.rdx")))
   })
 })
+
+} # if (TRUE && FALSE) {
