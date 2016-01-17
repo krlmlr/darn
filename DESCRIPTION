@@ -15,7 +15,8 @@ Imports:
     kimisc,
     R.utils,
     MakefileR,
-    purrr
+    purrr,
+    tibble
 Suggests:
     testthat,
     withr,
