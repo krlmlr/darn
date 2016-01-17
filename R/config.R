@@ -20,6 +20,8 @@ read_config <- function(root) {
 
   config_names <- gsub(CONFIG_PATTERN, "\\1", config_assignments)
   config_values <- gsub(CONFIG_PATTERN, "\\2", config_assignments)
+  config_values <- gsub('^"(.*)"$', "\\1", config_values)
+  config_values <- gsub("^'(.*)'$", "\\1", config_values)
 
   setNames(as.list(config_values), config_names)
 }
