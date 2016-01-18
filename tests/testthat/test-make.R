@@ -21,6 +21,19 @@ if (TEST_MAKE) {
       expect_true(file.exists(f("Dependencies")))
       expect_true(file.exists(f("B.rdx")))
     })
+
+    test_that("can make out_dir project", {
+      f <- setup_scenario("out_dir")
+
+      create_makefile(f())
+      withr::with_envvar(
+        c(R_LIBS=paste(.libPaths(), collapse = ":")),
+        {
+          expect_equal(run_make("-C", f(), "out/B.rdx"), 0L)
+        }
+      )
+      expect_true(file.exists(f("out/B.rdx")))
+    })
   })
 
 } # if (TEST_MAKE) {
