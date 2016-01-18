@@ -12,9 +12,10 @@ create_dep_file <- function(root_dir, file_name = "Dependencies") {
   MakefileR::write_makefile(deps_file, file.path(root_dir, file_name))
 }
 
-create_deps_rules <- function(root_dir, relative_to = root_dir) {
-  web <- parse_script(dir(root_dir, pattern = R_FILE_PATTERN, full.names = TRUE))
-  deps <- get_deps(web, relative_to = relative_to)
+create_deps_rules <- function(root_dir, base_dir = root_dir) {
+  web <- parse_script(dir(root_dir, pattern = R_FILE_PATTERN, full.names = TRUE),
+                      base_dir = base_dir)
+  deps <- get_deps(web)
 
   dep_rules <- mapply(
     function(target, dep) {
@@ -52,29 +53,25 @@ rdx_from_r_one <- function(web, path) {
   # TODO: Use root from web (not from path_info)
 }
 
-get_deps <- function(web, relative_to = ".") {
-  names(web) <- R.utils::getRelativePath(names(web), relative_to)
+get_deps <- function(web) {
   lapply(web, get_deps_one, relative_to = relative_to)
 }
 
 get_deps_one <- function(parsed_one, relative_to) {
   path <- dirname(parsed_one[["path"]])
-  deps <- parsed_one[["init"]][["deps"]]
-  if (is.null(deps)) {
-    return(NULL)
-  }
-  names(deps) <- R.utils::getRelativePath(file.path(path, names(deps)), relative_to)
-  deps
+  parsed_one[["init"]][["deps"]]
 }
 
-parse_script <- function(path) {
-  names(path) <- path
-  lapply(path, parse_script_one)
-
-  # TODO: Notion of "root directory" also here (or in read_web())
+parse_script <- function(path, base_dir) {
+  names(path) <- R.utils::getRelativePath(path, base_dir)
+  lapply(path, parse_script_one, base_dir = base_dir)
 }
 
-parse_script_one <- function(path) {
+parse_script_one <- function(path, base_dir) {
+  base_dir <- normalizePath(base_dir)
+  path <- normalizePath(path)
+  path_info <- get_path_info(path)
+
   exprs <- parse(path)
   darn_calls <- vapply(
     exprs,
@@ -112,6 +109,8 @@ parse_script_one <- function(path) {
     }
   )
   deps <- unlist(deps, recursive = FALSE)
+  names(deps) <- relative_to(file.path(path_info$source_dir, names(deps)),
+                             base_dir)
 
   done <- if (length(done_call_idx) > 0L) {
     done_call <- exprs[[done_call_idx]]
@@ -120,16 +119,25 @@ parse_script_one <- function(path) {
     list(names = names(done_lazy))
   }
 
-  path <- normalizePath(path)
-
-  # TODO: Check root dir returned by path info
+  if (normalizePath(path_info$root) != base_dir) {
+    stop("Project root for file ", path, " different from given base directory ",
+         base_dir, call. = FALSE)
+  }
 
   list(
     path = path,
-    path_info = get_path_info(path),
+    path_info = path_info,
     init = list(
       deps = deps
     ),
     done = done
   )
+}
+
+relative_to <- function(path, root) {
+  if (length(path) == 0L) {
+    return ()
+  }
+
+  R.utils::getRelativePath(path, root)
 }

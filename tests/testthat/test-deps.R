@@ -2,7 +2,7 @@ context("deps")
 
 test_that("parsing", {
   withr::with_dir("simple", {
-    expect_warning(parsed <- parse_script(dir(pattern = "[.][rR]$")), NA)
+    expect_warning(parsed <- parse_script(dir(pattern = "[.][rR]$"), "."), NA)
 
     A <- parsed[["A.R"]]
     expect_identical(A$path, normalizePath("A.R"))
@@ -26,7 +26,7 @@ test_that("parsing", {
 
 test_that("deps", {
   withr::with_dir("simple", {
-    web <- parse_script(dir(pattern = "[.][rR]$"))
+    web <- parse_script(dir(pattern = "[.][rR]$"), ".")
     expect_identical(
       get_deps(web),
       list("A.R" = NULL, "B.R" = list("A.R" = NULL))
@@ -35,19 +35,22 @@ test_that("deps", {
 })
 
 test_that("deps in subdir", {
-  web <- parse_script(dir("simple", pattern = "[.][rR]$", full.names = TRUE))
+  web <- parse_script(
+    dir("subdir", pattern = "[.][rR]$", full.names = TRUE, recursive = TRUE),
+    "subdir")
+
   expect_identical(
     get_deps(web),
-    list("simple/A.R" = NULL, "simple/B.R" = list("simple/A.R" = NULL))
+    list("dir/A.R" = NULL, "dir/B.R" = list("dir/A.R" = NULL))
   )
 })
 
 test_that("dep rules in subdir", {
-  rules <- create_deps_rules("simple", ".")
+  rules <- create_deps_rules("subdir/dir", "subdir")
   expect_true(
-    "all: simple/A.rdx simple/B.rdx" %in% format(rules))
+    "all: dir/A.rdx dir/B.rdx" %in% format(rules))
   expect_true(
-    "simple/B.rdx: simple/A.rdx" %in% format(rules))
+    "dir/B.rdx: dir/A.rdx" %in% format(rules))
 })
 
 test_that("dep file, by default into file named Dependencies", {
