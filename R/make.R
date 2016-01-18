@@ -49,20 +49,7 @@ create_makefile <- function(
       paste0("Rscript -e \"", PACKAGE_NAME, "::create_dep_file('.', '$@')\"")) +
 
     MakefileR::make_comment("This defines the dependencies between the R scripts") +
-    MakefileR::make_text("include ${dep_file_name}") +
-
-    MakefileR::make_comment("This defines the actual processing logic") +
-    purrr::reduce(
-      .init = MakefileR::make_group(),
-      .f = `+`,
-      lapply(
-        R_FILE_TARGETS,
-        MakefileR::make_rule,
-        targets = "${out_dir}/%.rdx",
-        script = "Rscript -e \"rmarkdown::render('$<', 'html_document')\""
-        #script = "Rscript $<"
-      )
-    )
+    MakefileR::make_text("include ${dep_file_name}")
 
   MakefileR::write_makefile(make_file, file.path(root_dir, file_name))
 }

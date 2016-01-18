@@ -26,16 +26,18 @@ test_that("parsing", {
 
 test_that("deps", {
   withr::with_dir("simple", {
+    web <- parse_script(dir(pattern = "[.][rR]$"))
     expect_identical(
-      get_deps(dir(pattern = "[.][rR]$")),
+      get_deps(web),
       list("A.R" = NULL, "B.R" = list("A.R" = NULL))
     )
   })
 })
 
 test_that("deps in subdir", {
+  web <- parse_script(dir("simple", pattern = "[.][rR]$", full.names = TRUE))
   expect_identical(
-    get_deps(dir("simple", pattern = "[.][rR]$", full.names = TRUE)),
+    get_deps(web),
     list("simple/A.R" = NULL, "simple/B.R" = list("simple/A.R" = NULL))
   )
 })
@@ -43,15 +45,15 @@ test_that("deps in subdir", {
 test_that("dep rules in subdir", {
   rules <- create_deps_rules("simple", ".")
   expect_true(
-    "all: ${out_dir}/simple/A.rdx ${out_dir}/simple/B.rdx" %in% format(rules))
+    "all: simple/A.rdx simple/B.rdx" %in% format(rules))
   expect_true(
-    "${out_dir}/simple/B.rdx: ${out_dir}/simple/A.rdx" %in% format(rules))
+    "simple/B.rdx: simple/A.rdx" %in% format(rules))
 })
 
 test_that("dep file, by default into file named Dependencies", {
   f <- setup_scenario("simple")
   create_dep_file(f())
   dep_contents <- readLines(f("Dependencies"))
-  expect_true("all: ${out_dir}/A.rdx ${out_dir}/B.rdx" %in% dep_contents)
-  expect_true("${out_dir}/B.rdx: ${out_dir}/A.rdx" %in% dep_contents)
+  expect_true("all: A.rdx B.rdx" %in% dep_contents)
+  expect_true("B.rdx: A.rdx" %in% dep_contents)
 })

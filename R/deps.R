@@ -13,31 +13,48 @@ create_dep_file <- function(root_dir, file_name = "Dependencies") {
 }
 
 create_deps_rules <- function(root_dir, relative_to = root_dir) {
-  deps <- get_deps(dir(root_dir, pattern = R_FILE_PATTERN, full.names = TRUE),
-                   relative_to = relative_to)
-  rules <- mapply(
+  web <- parse_script(dir(root_dir, pattern = R_FILE_PATTERN, full.names = TRUE))
+  deps <- get_deps(web, relative_to = relative_to)
+
+  dep_rules <- mapply(
     function(target, dep) {
       if (!is.null(dep))
-        MakefileR::make_rule(rdx_from_r(target), rdx_from_r(names(dep)))
+        MakefileR::make_rule(rdx_from_r(web, target), rdx_from_r(web, names(dep)))
       },
     names(deps), deps
   )
 
+  process_rules <- lapply(
+    names(deps),
+    function(target) {
+      MakefileR::make_rule(rdx_from_r(web, target), target, "${script}")
+    }
+  )
+
   init <-
     MakefileR::makefile() +
-    MakefileR::make_rule("all", rdx_from_r(names(deps)))
+    MakefileR::make_rule("all", rdx_from_r(web, names(deps)))
 
-  purrr::reduce(purrr::compact(rules), `+`, .init = init)
+  purrr::reduce(c(purrr::compact(dep_rules), process_rules),
+                `+`, .init = init)
 }
 
-rdx_from_r <- function(path) {
-  paste0("${out_dir}/", gsub(R_FILE_PATTERN, ".rdx", path))
+rdx_from_r <- function(web, paths) {
+  lapply(paths, rdx_from_r_one, web = web)
 }
 
-get_deps <- function(path, relative_to = ".") {
-  parsed <- parse_script(path)
-  names(parsed) <- R.utils::getRelativePath(names(parsed), relative_to)
-  lapply(parsed, get_deps_one, relative_to = relative_to)
+rdx_from_r_one <- function(web, path) {
+  path_info <- web[[path]]$path_info
+  R.utils::getRelativePath(
+    file.path(path_info$target_dir, gsub(R_FILE_PATTERN, ".rdx", path)),
+    path_info$root)
+
+  # TODO: Use root from web (not from path_info)
+}
+
+get_deps <- function(web, relative_to = ".") {
+  names(web) <- R.utils::getRelativePath(names(web), relative_to)
+  lapply(web, get_deps_one, relative_to = relative_to)
 }
 
 get_deps_one <- function(parsed_one, relative_to) {
@@ -53,6 +70,8 @@ get_deps_one <- function(parsed_one, relative_to) {
 parse_script <- function(path) {
   names(path) <- path
   lapply(path, parse_script_one)
+
+  # TODO: Notion of "root directory" also here (or in read_web())
 }
 
 parse_script_one <- function(path) {
@@ -101,8 +120,13 @@ parse_script_one <- function(path) {
     list(names = names(done_lazy))
   }
 
+  path <- normalizePath(path)
+
+  # TODO: Check root dir returned by path info
+
   list(
-    path = normalizePath(path),
+    path = path,
+    path_info = get_path_info(path),
     init = list(
       deps = deps
     ),
