@@ -4,10 +4,13 @@ TEST_MAKE_VERBOSE <- TRUE
 TEST_MAKE <- FALSE
 TEST_MAKE_VERBOSE <- FALSE
 
-setup_scenario <- function(path) {
+setup_scenario <- function(path, unlink_darnfile = FALSE) {
   target <- file.path(tempfile("darn"))
   dir.create(target)
   file.copy(path, target, recursive = TRUE)
+  if (unlink_darnfile) {
+    file.remove(file.path(target, path, CONFIG_FILE_NAME))
+  }
   path_base <- basename(path)
   eval(bquote(function(...) file.path(.(target), .(path_base), ...)))
 }
