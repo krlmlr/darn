@@ -13,12 +13,15 @@ if (
       f <- setup_scenario("simple")
 
       create_makefile(f())
+      expect_false(file.exists(f("Dependencies")))
+
       withr::with_envvar(
         c(R_LIBS=paste(.libPaths(), collapse = ":")),
         {
           expect_equal(run_make("-C", f(), "B.rdx"), 0L)
         }
       )
+      expect_true(file.exists(f("Dependencies")))
       expect_true(file.exists(f("B.rdx")))
     })
   })
