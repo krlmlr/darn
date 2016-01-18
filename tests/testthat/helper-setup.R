@@ -1,3 +1,9 @@
+TEST_MAKE <- TRUE
+TEST_MAKE_VERBOSE <- TRUE
+
+TEST_MAKE <- FALSE
+TEST_MAKE_VERBOSE <- FALSE
+
 setup_scenario <- function(path) {
   target <- file.path(tempfile("darn"))
   dir.create(target)
@@ -7,5 +13,9 @@ setup_scenario <- function(path) {
 }
 
 run_make <- function(...) {
-  system2("make", args = c(...), stdout = NULL, stderr = NULL)
+  if (TEST_MAKE_VERBOSE) {
+    system2("make", args = c(...))
+  } else {
+    system2("make", args = c(...), stdout = NULL, stderr = NULL)
+  }
 }

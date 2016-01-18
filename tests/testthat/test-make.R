@@ -1,9 +1,6 @@
 context("make")
 
-if (
-  TRUE
-  && FALSE
-  ) {
+if (TEST_MAKE) {
 
   withr::with_temp_libpaths({
     devtools::install(dependencies = FALSE, upgrade_dependencies = FALSE, quiet = TRUE)
@@ -26,4 +23,4 @@ if (
     })
   })
 
-} # if (TRUE && FALSE) {
+} # if (TEST_MAKE) {
