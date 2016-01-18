@@ -1,6 +1,6 @@
 Package: darn
 Title: Directed Acyclic R Script Networks
-Version: 0.0-4
+Version: 0.1
 Date: 2016-01-18
 Authors@R: as.person("Kirill Müller <krlmlr+r@mailbox.org> [aut, cre]")
 Description: Data pipelines made of R scripts.
