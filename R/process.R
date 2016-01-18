@@ -25,7 +25,9 @@ get_path_info <- function(path = NULL) {
 
   target_dir <- file.path(root, out_dir, relative_source_dir)
 
-  lst(path, source_dir, root, target_dir)
+  target_base <- file.path(target_dir, strip_extension(basename(path)))
+
+  lst(path, source_dir, root, target_dir, target_base)
 }
 
 #' @export
@@ -34,8 +36,6 @@ get_path_info <- function(path = NULL) {
 #' @rdname init
 init_ <- function(..., .dots = NULL, envir = parent.frame()) {
   path_info <- get_path_info()
-
-  file_base <- strip_extension(basename(path_info$path))
 
   deps_list <- get_init_deps_list(.dots, ...)
 
@@ -108,14 +108,11 @@ NULL
 done_ <- function(..., .dots = NULL, .compress = FALSE) {
   path_info <- get_path_info()
 
-  file_base <- strip_extension(basename(path_info$path))
-
   dots <- get_done_dots(.dots, ...)
   vals <- lazyeval::lazy_eval(dots)
 
   dir.create(path_info$target_dir, showWarnings = FALSE, recursive = TRUE)
-  tools:::makeLazyLoadDB(vals, file.path(path_info$target_dir, file_base),
-                         compress = .compress)
+  tools:::makeLazyLoadDB(vals, path_info$target_base, compress = .compress)
 }
 
 get_done_dots <- function(.dots, ...) {
