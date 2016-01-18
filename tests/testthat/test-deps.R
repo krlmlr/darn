@@ -42,20 +42,22 @@ test_that("deps in subdir", {
 
 test_that("dep rules", {
   rules <- create_deps_rules("simple")
-  expect_true(any(grepl("all: A[.]rdx B[.]rdx", format(rules))))
-  expect_true(any(grepl("B[.]rdx: A[.]rdx", format(rules))))
+  expect_true("all: ${out_dir}/A.rdx ${out_dir}/B.rdx" %in% format(rules))
+  expect_true("${out_dir}/B.rdx: ${out_dir}/A.rdx" %in% format(rules))
 })
 
 test_that("dep rules in subdir", {
   rules <- create_deps_rules("simple", ".")
-  expect_true(any(grepl("all: simple/A[.]rdx simple/B[.]rdx", format(rules))))
-  expect_true(any(grepl("simple/B[.]rdx: simple/A[.]rdx", format(rules))))
+  expect_true(
+    "all: ${out_dir}/simple/A.rdx ${out_dir}/simple/B.rdx" %in% format(rules))
+  expect_true(
+    "${out_dir}/simple/B.rdx: ${out_dir}/simple/A.rdx" %in% format(rules))
 })
 
 test_that("dep file, by default into file named Dependencies", {
   f <- setup_scenario("simple")
   create_dep_file(f())
   dep_contents <- readLines(f("Dependencies"))
-  expect_true(any(grepl("all: A[.]rdx B[.]rdx", dep_contents)))
-  expect_true(any(grepl("B[.]rdx: A[.]rdx", dep_contents)))
+  expect_true("all: ${out_dir}/A.rdx ${out_dir}/B.rdx" %in% dep_contents)
+  expect_true("${out_dir}/B.rdx: ${out_dir}/A.rdx" %in% dep_contents)
 })

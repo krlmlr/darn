@@ -30,8 +30,8 @@ create_deps_rules <- function(root_dir, relative_to = root_dir) {
   purrr::reduce(purrr::compact(rules), `+`, .init = init)
 }
 
-rdx_from_r <- function(path, relative_to) {
-  gsub(R_FILE_PATTERN, ".rdx", path)
+rdx_from_r <- function(path) {
+  paste0("${out_dir}/", gsub(R_FILE_PATTERN, ".rdx", path))
 }
 
 get_deps <- function(path, relative_to = ".") {
