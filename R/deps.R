@@ -6,15 +6,18 @@
 #' @param root_dir \code{character[1]}\cr The root directory
 #' @param file_name \code{character[1]}\cr File path (relative to the root
 #'   directory), default: \code{Dependencies}
+#' @param src_dir \code{character[1]}\cr The source directory, relative to the
+#'   root
 #' @export
-create_dep_file <- function(root_dir, file_name = "Dependencies") {
-  deps_file <- create_deps_rules(root_dir)
+create_dep_file <- function(root_dir, file_name = "Dependencies",
+                            src_dir = ".") {
+  deps_file <- create_deps_rules(root_dir, file.path(root_dir, src_dir))
   MakefileR::write_makefile(deps_file, file.path(root_dir, file_name))
 }
 
-create_deps_rules <- function(root_dir, base_dir = root_dir) {
-  web <- parse_script(dir(root_dir, pattern = R_FILE_PATTERN, full.names = TRUE),
-                      base_dir = base_dir)
+create_deps_rules <- function(root_dir, src_dir = root_dir) {
+  web <- parse_script(dir(src_dir, pattern = R_FILE_PATTERN, full.names = TRUE),
+                      base_dir = root_dir)
   deps <- get_deps(web)
 
   dep_rules <- mapply(

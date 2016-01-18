@@ -46,7 +46,7 @@ test_that("deps in subdir", {
 })
 
 test_that("dep rules in subdir", {
-  rules <- create_deps_rules("subdir/dir", "subdir")
+  rules <- create_deps_rules("subdir", "subdir/dir")
   expect_true(
     "all: dir/A.rdx dir/B.rdx" %in% format(rules))
   expect_true(
