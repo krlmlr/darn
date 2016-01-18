@@ -13,19 +13,31 @@
 #' @export
 create_makefile <- function(root_dir, file_name = "Makefile",
                             dep_file_name = "Dependencies", out_dir = ".") {
+
   out_dir <- R.utils::getRelativePath(file.path(root_dir, out_dir), root_dir)
 
-  config_file <-
-    MakefileR::makefile() +
-    MakefileR::make_comment("This section contains the configuration of the R script network") +
-    MakefileR::make_def("dep_file_name", dep_file_name) +
-    MakefileR::make_def("out_dir", out_dir)
+  config_path <- file.path(root_dir, CONFIG_FILE_NAME)
 
-  MakefileR::write_makefile(config_file, file.path(root_dir, CONFIG_FILE_NAME))
+  if (!file.exists(config_path)) {
+    config_file <-
+      MakefileR::makefile() +
+      MakefileR::make_comment("This file contains the configuration of the R script network.") +
+      create_config_group(dep_file_name, out_dir)
+    MakefileR::write_makefile(config_file, config_path)
+  }
+
+  my_formals <- formals()
 
   make_file <-
     MakefileR::makefile() +
-    MakefileR::make_text(paste0("include ", CONFIG_FILE_NAME)) +
+
+    MakefileR::make_group(
+      MakefileR::make_comment("Configuration, and default values"),
+      MakefileR::make_text(paste0("include ", CONFIG_FILE_NAME)),
+      create_config_group(dep_file_name = my_formals$dep_file_name,
+                          out_dir = my_formals$out_dir,
+                          operator = "?=")
+    ) +
 
     MakefileR::make_comment("This makes sure that the dependencies are created initially, and updated with each invocation") +
     MakefileR::make_rule(R_FILE_TARGETS, "${dep_file_name}") +
@@ -44,8 +56,16 @@ create_makefile <- function(root_dir, file_name = "Makefile",
         MakefileR::make_rule,
         targets = "${out_dir}/%.rdx",
         script = "Rscript -e \"rmarkdown::render('$<', 'html_document')\""
+        #script = "Rscript $<"
       )
     )
 
   MakefileR::write_makefile(make_file, file.path(root_dir, file_name))
+}
+
+create_config_group <- function(dep_file_name, out_dir, operator = "=") {
+  MakefileR::make_group(
+    MakefileR::make_def("dep_file_name", dep_file_name, operator),
+    MakefileR::make_def("out_dir", out_dir, operator)
+  )
 }

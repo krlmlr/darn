@@ -14,7 +14,7 @@ Imports:
     rprojroot,
     kimisc,
     R.utils,
-    MakefileR,
+    MakefileR (>= 1.0-2),
     purrr,
     tibble
 Suggests:
