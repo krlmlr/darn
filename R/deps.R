@@ -46,9 +46,7 @@ rdx_from_r <- function(web, paths) {
 
 rdx_from_r_one <- function(web, path) {
   path_info <- web[[path]]$path_info
-  R.utils::getRelativePath(
-    file.path(path_info$target_dir, gsub(R_FILE_PATTERN, ".rdx", path)),
-    path_info$root)
+  relative_to(paste0(path_info$target_base, ".rdx"), path_info$root)
 
   # TODO: Use root from web (not from path_info)
 }
