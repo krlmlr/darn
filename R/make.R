@@ -17,7 +17,7 @@ create_makefile <- function(
   root_dir, file_name = "Makefile", dep_file_name = "Dependencies",
   out_dir = ".", script = "Rscript -e \"rmarkdown::render('$<', 'html_document')\"") {
 
-  out_dir <- R.utils::getRelativePath(file.path(root_dir, out_dir), root_dir)
+  out_dir <- relative_to(file.path(root_dir, out_dir), root_dir)
 
   config_path <- file.path(root_dir, CONFIG_FILE_NAME)
 

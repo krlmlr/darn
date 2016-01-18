@@ -21,7 +21,7 @@ get_path_info <- function(path = NULL) {
   config <- read_config(root)
   out_dir <- config[["out_dir"]] %||% "."
 
-  relative_source_dir <- R.utils::getRelativePath(source_dir, root)
+  relative_source_dir <- relative_to(source_dir, root)
 
   target_dir <- file.path(root, out_dir, relative_source_dir)
 

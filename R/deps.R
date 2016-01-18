@@ -61,7 +61,7 @@ get_deps_one <- function(parsed_one, relative_to) {
 }
 
 parse_script <- function(path, base_dir) {
-  names(path) <- R.utils::getRelativePath(path, base_dir)
+  names(path) <- relative_to(path, base_dir)
   lapply(path, parse_script_one, base_dir = base_dir)
 }
 
