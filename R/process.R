@@ -9,9 +9,11 @@
 NULL
 
 #' @importFrom tibble lst
-get_path_info <- function() {
-  path <- kimisc::thisfile()
-  path <- gsub("(.*)[.]spin[.]Rmd$", "\\1.R", path) ## HACK HACK HACK
+get_path_info <- function(path = NULL) {
+  if (is.null(path)) {
+    path <- kimisc::thisfile()
+    path <- gsub("(.*)[.]spin[.]Rmd$", "\\1.R", path) ## HACK HACK HACK
+  }
 
   source_dir <- dirname(path)
 
