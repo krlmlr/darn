@@ -15,7 +15,7 @@ Additional dependencies as list}
 }
 \description{
 Add a call to this functions as first statement to each of your scripts,
-using double-colon notation (\code{darg::init()}).  A script without such a
+using double-colon notation (\code{darn::init()}).  A script without such a
 call is considered to have no dependencies.
 }
 

@@ -4,13 +4,16 @@
 \alias{create_dep_file}
 \title{Create dependencies file}
 \usage{
-create_dep_file(root_dir, file_name = "Dependencies")
+create_dep_file(root_dir, file_name = "Dependencies", src_dir = ".")
 }
 \arguments{
 \item{root_dir}{\code{character[1]}\cr The root directory}
 
 \item{file_name}{\code{character[1]}\cr File path (relative to the root
 directory), default: \code{Dependencies}}
+
+\item{src_dir}{\code{character[1]}\cr The source directory, relative to the
+root}
 }
 \description{
 This function collects dependency information for all scripts below the

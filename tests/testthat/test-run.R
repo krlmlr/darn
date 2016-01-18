@@ -12,6 +12,18 @@ test_that("can run single script", {
   expect_identical(as.list(env), list(fortytwo = 42))
 })
 
+test_that("can run single script with different output directory", {
+  f <- setup_scenario("out_dir")
+
+  expect_error(source(f("A.R"), local = TRUE), NA)
+  expect_true(file.exists(f("out/A.rdb")))
+  expect_true(file.exists(f("out/A.rdx")))
+
+  env <- new.env()
+  lazyLoad(f("out/A"), envir = env)
+  expect_identical(as.list(env), list(fortytwo = 42))
+})
+
 test_that("can run script with dependency", {
   f <- setup_scenario("simple")
 
@@ -23,5 +35,19 @@ test_that("can run script with dependency", {
 
   env <- new.env()
   lazyLoad(f("B"), envir = env)
+  expect_identical(as.list(env), list(twentyone = 21))
+})
+
+test_that("can run script in subdir", {
+  f <- setup_scenario("subdir")
+
+  expect_error(source(f("dir/B.R"), local = TRUE), NA)
+  expect_true(file.exists(f("dir/A.rdb")))
+  expect_true(file.exists(f("dir/A.rdx")))
+  expect_true(file.exists(f("dir/B.rdb")))
+  expect_true(file.exists(f("dir/B.rdx")))
+
+  env <- new.env()
+  lazyLoad(f("dir/B"), envir = env)
   expect_identical(as.list(env), list(twentyone = 21))
 })

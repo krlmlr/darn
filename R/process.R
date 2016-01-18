@@ -1,27 +1,46 @@
 #' Init a stage
 #'
 #' Add a call to this functions as first statement to each of your scripts,
-#' using double-colon notation (\code{darg::init()}).  A script without such a
+#' using double-colon notation (\code{darn::init()}).  A script without such a
 #' call is considered to have no dependencies.
 #'
 #' @param ... Dependencies
 #' @name init
 NULL
 
+#' @importFrom tibble lst
+get_path_info <- function(path = NULL) {
+  if (is.null(path)) {
+    path <- kimisc::thisfile()
+    path <- gsub("(.*)[.]spin[.]Rmd$", "\\1.R", path) ## HACK HACK HACK
+  }
+
+  source_dir <- dirname(path)
+
+  root <- root_file_path(path = source_dir)
+  config <- read_config(root)
+  out_dir <- config[["out_dir"]] %||% "."
+
+  relative_source_dir <- relative_to(source_dir, root)
+
+  target_dir <- file.path(root, out_dir, relative_source_dir)
+
+  target_base <- file.path(target_dir, strip_extension(basename(path)))
+
+  lst(path, source_dir, root, target_dir, target_base)
+}
+
 #' @export
 #' @param .dots \code{list}\cr
 #'   Additional dependencies as list
 #' @rdname init
 init_ <- function(..., .dots = NULL, envir = parent.frame()) {
-  path <- kimisc::thisfile()
-  source_dir <- dirname(path)
-  target_dir <- dirname(path)
-  file_base <- gsub("[.][^.]*", "", basename(path))
+  path_info <- get_path_info()
 
   deps_list <- get_init_deps_list(.dots, ...)
 
   mapply(init_one, names(deps_list), deps_list, MoreArgs = list(
-    source_dir = source_dir, target_dir = target_dir, envir = envir))
+    path_info = path_info, envir = envir))
 }
 
 get_init_deps_list <- function(.dots, ...) {
@@ -43,11 +62,11 @@ get_init_deps_list <- function(.dots, ...) {
   deps_list
 }
 
-init_one <- function(r_file_name, deps, source_dir, target_dir, envir) {
-  r_file <- file.path(source_dir, r_file_name)
+init_one <- function(r_file_name, deps, path_info, envir) {
+  r_file <- file.path(path_info$source_dir, r_file_name)
   file_base <- strip_extension(r_file_name)
 
-  rdx_base <- file.path(target_dir, file_base)
+  rdx_base <- file.path(path_info$target_dir, file_base)
   rdx_file <- sprintf("%s.rdx", rdx_base)
 
   info <- file.info(r_file, rdx_file)
@@ -72,7 +91,7 @@ init <- lazyforward::lazyforward("init_")
 #' Write the results of a stage
 #'
 #' Add a call to this functions as last statement to each of your scripts,
-#' using double-colon notation (\code{darg::done()}).  A script without such a
+#' using double-colon notation (\code{darn::done()}).  A script without such a
 #' call is considered to have no output and cannot be a dependency of another
 #' script.
 #'
@@ -87,15 +106,13 @@ NULL
 #'   Compress output (default: \code{FALSE})
 #' @rdname done
 done_ <- function(..., .dots = NULL, .compress = FALSE) {
-  path <- kimisc::thisfile()
-  target_dir <- dirname(path)
-  file_base <- strip_extension(basename(path))
+  path_info <- get_path_info()
 
   dots <- get_done_dots(.dots, ...)
   vals <- lazyeval::lazy_eval(dots)
 
-  tools:::makeLazyLoadDB(vals, file.path(target_dir, file_base),
-                         compress = .compress)
+  dir.create(path_info$target_dir, showWarnings = FALSE, recursive = TRUE)
+  tools:::makeLazyLoadDB(vals, path_info$target_base, compress = .compress)
 }
 
 get_done_dots <- function(.dots, ...) {

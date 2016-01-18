@@ -1,17 +1,68 @@
 context("make")
 
-test_that("can make simple project", {
-  f <- setup_scenario("simple")
+if (TEST_MAKE) {
 
-  create_makefile(f())
   withr::with_temp_libpaths({
     devtools::install(dependencies = FALSE, upgrade_dependencies = FALSE, quiet = TRUE)
-    withr::with_envvar(
-      c(R_LIBS=paste(.libPaths(), collapse = ":")),
-      {
-        expect_equal(run_make("-C", f(), "B.rdx"), 0L)
-      }
-    )
+    expect_null(NULL)
+
+    test_that("can make simple project", {
+      f <- setup_scenario("simple")
+
+      create_makefile(f())
+      expect_false(file.exists(f("Dependencies")))
+
+      withr::with_envvar(
+        c(R_LIBS=paste(.libPaths(), collapse = ":")),
+        {
+          expect_equal(run_make("-C", f(), "B.rdx"), 0L)
+        }
+      )
+      expect_true(file.exists(f("Dependencies")))
+      expect_true(file.exists(f("B.rdx")))
+    })
+
+    test_that("can make out_dir project", {
+      f <- setup_scenario("out_dir")
+
+      create_makefile(f())
+      withr::with_envvar(
+        c(R_LIBS=paste(.libPaths(), collapse = ":")),
+        {
+          #withr::with_dir(f(), system("xterm"))
+          expect_equal(run_make("-C", f(), "out/B.rdx"), 0L)
+        }
+      )
+      expect_true(file.exists(f("out/B.rdx")))
+    })
+
+    test_that("can make subdir project", {
+      f <- setup_scenario("subdir", unlink_darnfile = TRUE)
+
+      create_makefile(f(), src_dir = "dir")
+      withr::with_envvar(
+        c(R_LIBS=paste(.libPaths(), collapse = ":")),
+        {
+          #withr::with_dir(f(), system("xterm"))
+          expect_equal(run_make("-C", f(), "dir/B.rdx"), 0L)
+        }
+      )
+      expect_true(file.exists(f("dir/B.rdx")))
+    })
+
+    test_that("can make subdir project with out_dir", {
+      f <- setup_scenario("subdir", unlink_darnfile = TRUE)
+
+      create_makefile(f(), src_dir = "dir", out_dir = "out")
+      withr::with_envvar(
+        c(R_LIBS=paste(.libPaths(), collapse = ":")),
+        {
+          #withr::with_dir(f(), system("xterm"))
+          expect_equal(run_make("-C", f(), "out/dir/B.rdx"), 0L)
+        }
+      )
+      expect_true(file.exists(f("out/dir/B.rdx")))
+    })
   })
-  expect_true(file.exists(f("B.rdx")))
-})
+
+} # if (TEST_MAKE) {
