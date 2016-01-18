@@ -29,6 +29,7 @@ if (TEST_MAKE) {
       withr::with_envvar(
         c(R_LIBS=paste(.libPaths(), collapse = ":")),
         {
+          #withr::with_dir(f(), system("xterm"))
           expect_equal(run_make("-C", f(), "out/B.rdx"), 0L)
         }
       )
