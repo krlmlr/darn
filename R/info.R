@@ -1,5 +1,5 @@
 #' @importFrom tibble lst
-get_path_info <- function(path = NULL) {
+get_path_info <- function(path = NULL, .get_env_vals = NULL) {
   if (is.null(path)) {
     path <- kimisc::thisfile()
     path <- gsub("(.*)[.]spin[.]Rmd$", "\\1.R", path) ## HACK HACK HACK
@@ -11,7 +11,12 @@ get_path_info <- function(path = NULL) {
   config <- read_config(root)
   out_dir <- config[["out_dir"]] %||% "."
 
-  env_vals <- get_env_vals(config)
+  if (is.null(.get_env_vals)) {
+    .get_env_vals = get_env_vals
+  }
+
+  env_vars <- get_env_vars(config)
+  env_vals <- .get_env_vals(env_vars)
   env_dir <- get_env_dir(env_vals)
 
   relative_source_dir <- relative_to(source_dir, root)
@@ -23,10 +28,14 @@ get_path_info <- function(path = NULL) {
   lst(path, source_dir, root, target_dir, target_base, env_vals)
 }
 
-get_env_vals <- function(config) {
+get_env_vars <- function(config) {
   env_vars <- strsplit(config[["env_vars"]] %||% "", "\\s+")[[1L]]
   env_vars <- env_vars[env_vars != ""]
 
+  env_vars
+}
+
+get_env_vals <- function(env_vars) {
   if (length(env_vars) == 0L) {
     return()
   }
