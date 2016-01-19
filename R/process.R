@@ -97,7 +97,8 @@ init_one <- function(r_file_name, deps, path_info, envir) {
 
 #' @export
 #' @inheritParams init_
-init <- lazyforward::lazyforward("init_")
+#' @importFrom lazyforward lazyforward
+init <- lazyforward("init_")
 
 #' Write the results of a stage
 #'
@@ -132,4 +133,5 @@ get_done_dots <- function(.dots, ...) {
 
 #' @export
 #' @inheritParams done_
-done <- lazyforward::lazyforward("done_")
+#' @importFrom lazyforward lazyforward
+done <- lazyforward("done_")
