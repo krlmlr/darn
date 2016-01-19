@@ -1,3 +1,10 @@
+Version 0.1-1 (2016-01-19)
+===
+
+- Default values for configuration variables are added to, and queried from, the `Darnfile` (#18).
+- Allow passing environment variables to the scripts, which are then loaded into the workspace along with the data (#15).
+
+
 Version 0.1 (2016-01-18)
 ===
 
