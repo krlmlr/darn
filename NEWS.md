@@ -1,15 +1,11 @@
-Version 0.1-2 (2016-01-19)
+Version 0.2 (2016-01-19)
 ===
 
+- Feature-complete release.
+- Allow passing environment variables to the scripts, which are then loaded into the workspace along with the data (#15).
+- Default values for configuration variables are added to, and queried from, the `Darnfile` (#18).
 - New `dep_graph()` returns dependency graph (#17).
 - Satisfy `R CMD check`.
-
-
-Version 0.1-1 (2016-01-19)
-===
-
-- Default values for configuration variables are added to, and queried from, the `Darnfile` (#18).
-- Allow passing environment variables to the scripts, which are then loaded into the workspace along with the data (#15).
 
 
 Version 0.1 (2016-01-18)
