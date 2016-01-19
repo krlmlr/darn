@@ -14,6 +14,8 @@ NULL
 #'   Additional dependencies as list
 #' @param env_vars \code{[character]}\cr
 #'   Environment variables that define the configuration of the script
+#' @param envir \code{[environment]}\cr
+#'   Environment to load the data into. Default: parent frame.
 #' @rdname init
 init_ <- function(..., .dots = NULL, env_vars = NULL,
                   envir = parent.frame()) {
@@ -95,7 +97,8 @@ init_one <- function(r_file_name, deps, path_info, envir) {
 
 #' @export
 #' @inheritParams init_
-init <- lazyforward::lazyforward("init_")
+#' @importFrom lazyforward lazyforward
+init <- lazyforward("init_")
 
 #' Write the results of a stage
 #'
@@ -121,7 +124,7 @@ done_ <- function(..., .dots = NULL, .compress = FALSE) {
   vals <- lazyeval::lazy_eval(dots)
 
   dir.create(path_info$target_dir, showWarnings = FALSE, recursive = TRUE)
-  tools:::makeLazyLoadDB(vals, path_info$target_base, compress = .compress)
+  getMakeLazyLoadDB()(vals, path_info$target_base, compress = .compress)
 }
 
 get_done_dots <- function(.dots, ...) {
@@ -130,4 +133,5 @@ get_done_dots <- function(.dots, ...) {
 
 #' @export
 #' @inheritParams done_
-done <- lazyforward::lazyforward("done_")
+#' @importFrom lazyforward lazyforward
+done <- lazyforward("done_")

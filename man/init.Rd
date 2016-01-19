@@ -15,6 +15,9 @@ Additional dependencies as list}
 
 \item{env_vars}{\code{[character]}\cr
 Environment variables that define the configuration of the script}
+
+\item{envir}{\code{[environment]}\cr
+Environment to load the data into. Default: parent frame.}
 }
 \description{
 Add a call to this functions as first statement to each of your scripts,

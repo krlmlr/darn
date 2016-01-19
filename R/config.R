@@ -5,9 +5,11 @@ PACKAGE_NAME <- unname(read.dcf("DESCRIPTION")[1L, "Package"])
 
 CONFIG_FILE_NAME <- "Darnfile"
 
-root_criterion <- rprojroot::has_file(CONFIG_FILE_NAME)
+#' @importFrom rprojroot has_file
+root_criterion <- has_file(CONFIG_FILE_NAME)
 
-root_file_path <- rprojroot::make_find_root_file(root_criterion)
+#' @importFrom rprojroot make_find_root_file
+root_file_path <- make_find_root_file(root_criterion)
 
 #' @importFrom stats setNames
 read_config <- function(root) {
