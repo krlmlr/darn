@@ -76,10 +76,10 @@ if (TEST_MAKE) {
           #withr::with_dir(f(), system("xterm"))
           dep_file <- readLines(f("Dependencies"))
 
-          expect_equal(run_make("-C", f()), 2L)
+          expect_equal(run_make("-C", f()), 0L)
 
           withr::with_envvar(
-            c(FORTYTWO="42", TWENTYONE="21"),
+            c(FORTYTWO="44", TWENTYONE="23"),
             {
               #withr::with_dir(f(), system("xterm"))
               expect_equal(run_make("-C", f()), 0L)
@@ -100,6 +100,7 @@ if (TEST_MAKE) {
 
       expect_true(file.exists(f("out/FORTYTWO-42/TWENTYONE-21/src/B.rdx")))
       expect_true(file.exists(f("out/FORTYTWO-43/TWENTYONE-22/src/B.rdx")))
+      expect_true(file.exists(f("out/FORTYTWO-44/TWENTYONE-23/src/B.rdx")))
     })
   })
 

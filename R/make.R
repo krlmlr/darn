@@ -12,9 +12,9 @@
 #' @param src_dir,out_dir \code{[character(1)]}\cr
 #'   Source and output directories (relative to the root directory), default:
 #'   \code{"."}
-#' @param env_vars \code{[character]}\cr
-#'   Names of environment variables that define configurations of the script,
-#'   default: none
+#' @param env_vars \code{[named list]}\cr
+#'   Default values for environment variables that define configurations of the
+#'   script, default: none
 #' @param script \code{[character]}\cr Script that processes the input files,
 #'   default: a call to \code{rmarkdown::\link[rmarkdown]{render}}
 #' @export
@@ -72,11 +72,21 @@ create_makefile <- function(
 
 create_config_group <- function(dep_file_name, src_dir, out_dir, env_vars,
                                 script, operator = "=") {
-  MakefileR::make_group(
+  ret <- MakefileR::make_group(
     MakefileR::make_def("dep_file_name", dep_file_name, operator),
     MakefileR::make_def("src_dir", src_dir, operator),
     MakefileR::make_def("out_dir", out_dir, operator),
-    MakefileR::make_def("env_vars", env_vars %||% "", operator),
+    MakefileR::make_def("env_vars", paste(names(env_vars), collapse = " "), operator),
     MakefileR::make_def("script", script, operator)
   )
+
+  if (operator == "=" && length(env_vars) > 0L) {
+    ret <- ret + MakefileR::make_group(
+      MakefileR::make_comment("Default values for configuration variables"),
+      .dots = mapply(MakefileR::make_def, names(env_vars), env_vars,
+                     MoreArgs = list(operator = "?="), SIMPLIFY = FALSE)
+    )
+  }
+
+  ret
 }
