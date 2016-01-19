@@ -25,6 +25,7 @@ Suggests:
 RoxygenNote: 5.0.1.9000
 Collate:
     'config.R'
+    'darn.R'
     'deps.R'
     'info.R'
     'make.R'
