@@ -14,6 +14,8 @@ NULL
 #'   Additional dependencies as list
 #' @param env_vars \code{[character]}\cr
 #'   Environment variables that define the configuration of the script
+#' @param envir \code{[environment]}\cr
+#'   Environment to load the data into. Default: parent frame.
 #' @rdname init
 init_ <- function(..., .dots = NULL, env_vars = NULL,
                   envir = parent.frame()) {
