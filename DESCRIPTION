@@ -18,6 +18,7 @@ Imports:
     lazyeval,
     lazyforward,
     rprojroot,
+    memoise,
     kimisc,
     R.utils,
     purrr,

@@ -14,7 +14,8 @@ relative_to <- function(path, root) {
   R.utils::getRelativePath(path, root)
 }
 
-getMakeLazyLoadDB <- function() {
+#' @importFrom memoise memoise
+getMakeLazyLoadDB <- memoise(function() {
   eval(bquote(function (from, filebase, compress = TRUE, ascii = FALSE,
                         variables) {
     ascii <- as.logical(ascii)
@@ -102,4 +103,4 @@ getMakeLazyLoadDB <- function() {
     val <- list(variables = vals, references = rvals, compressed = compress)
     saveRDS(val, mapfile)
   }, where = as.environment(list(Internal = as.name(".Internal")))))
-}
+})
