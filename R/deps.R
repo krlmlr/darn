@@ -71,7 +71,7 @@ parse_script <- function(path, base_dir) {
 parse_script_one <- function(path, base_dir) {
   base_dir <- normalizePath(base_dir)
   path <- normalizePath(path)
-  path_info <- get_path_info(path)
+  path_info <- get_path_info(path, expand_makefile_env_vars)
 
   exprs <- parse(path)
   darn_calls <- vapply(
@@ -106,7 +106,9 @@ parse_script_one <- function(path, base_dir) {
     exprs[init_call_idx],
     function(init_call) {
       init_call[[1]] <- quote(lazyeval::lazy_dots)
-      get_init_deps_list(eval(init_call))
+      init_args <- eval(init_call)
+      init_args <- init_args[names(init_args) %nin% names(formals(init))]
+      get_init_deps_list(init_args)
     }
   )
   deps <- unlist(deps, recursive = FALSE)
@@ -135,10 +137,10 @@ parse_script_one <- function(path, base_dir) {
   )
 }
 
-relative_to <- function(path, root) {
-  if (length(path) == 0L) {
-    return ()
+#' @importFrom stats setNames
+expand_makefile_env_vars <- function(x) {
+  if (length(x) == 0L) {
+    return()
   }
-
-  R.utils::getRelativePath(path, root)
+  setNames(paste0("${", x, "}"), x)
 }

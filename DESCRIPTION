@@ -26,6 +26,7 @@ RoxygenNote: 5.0.1.9000
 Collate:
     'config.R'
     'deps.R'
+    'info.R'
     'make.R'
     'process.R'
     'root.R'
