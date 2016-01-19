@@ -134,11 +134,3 @@ parse_script_one <- function(path, base_dir) {
     done = done
   )
 }
-
-relative_to <- function(path, root) {
-  if (length(path) == 0L) {
-    return ()
-  }
-
-  R.utils::getRelativePath(path, root)
-}
