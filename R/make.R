@@ -41,6 +41,12 @@ create_makefile <- function(
     MakefileR::makefile() +
 
     MakefileR::make_group(
+      MakefileR::make_comment(paste0("Primary target (further defined in ",
+                                     dep_file_name , ")")),
+      MakefileR::make_rule("all")
+    ) +
+
+    MakefileR::make_group(
       MakefileR::make_comment("Configuration, and default values"),
       MakefileR::make_text(paste0("include ", CONFIG_FILE_NAME)),
       create_config_group(dep_file_name = my_formals$dep_file_name,
