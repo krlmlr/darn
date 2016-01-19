@@ -124,7 +124,7 @@ done_ <- function(..., .dots = NULL, .compress = FALSE) {
   vals <- lazyeval::lazy_eval(dots)
 
   dir.create(path_info$target_dir, showWarnings = FALSE, recursive = TRUE)
-  tools:::makeLazyLoadDB(vals, path_info$target_base, compress = .compress)
+  getMakeLazyLoadDB()(vals, path_info$target_base, compress = .compress)
 }
 
 get_done_dots <- function(.dots, ...) {
