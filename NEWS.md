@@ -1,3 +1,10 @@
+Version 0.1-2 (2016-01-19)
+===
+
+- New `dep_graph()` returns dependency graph (#17).
+- Satisfy `R CMD check`.
+
+
 Version 0.1-1 (2016-01-19)
 ===
 
