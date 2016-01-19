@@ -69,7 +69,7 @@ if (TEST_MAKE) {
 
       create_makefile(f())
       withr::with_envvar(
-        c(R_LIBS=paste(.libPaths(), collapse = ":")),
+        c(R_LIBS=paste(.libPaths(), collapse = ":"), FORTYTWO="42", TWENTYONE="21"),
         {
           #withr::with_dir(f(), system("xterm"))
           expect_equal(run_make("-C", f()), 0L)
