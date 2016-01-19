@@ -14,7 +14,7 @@ read_config <- function(root) {
   config <- file.path(root, CONFIG_FILE_NAME)
   config_contents <- readLines(config)
 
-  CONFIG_PATTERN <- "([^=]+)=(.*)"
+  CONFIG_PATTERN <- "([^=?]+)[?]?=(.*)"
 
   config_assignments <- grep(CONFIG_PATTERN, config_contents, value = TRUE)
 

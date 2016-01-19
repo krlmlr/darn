@@ -138,9 +138,9 @@ parse_script_one <- function(path, base_dir) {
 }
 
 #' @importFrom stats setNames
-expand_makefile_env_vars <- function(x) {
-  if (length(x) == 0L) {
+expand_makefile_env_vars <- function(env_vars, ...) {
+  if (length(env_vars) == 0L) {
     return()
   }
-  setNames(paste0("${", x, "}"), x)
+  setNames(paste0("${", env_vars, "}"), env_vars)
 }
