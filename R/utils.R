@@ -104,3 +104,9 @@ getMakeLazyLoadDB <- memoise(function() {
     saveRDS(val, mapfile)
   }, where = as.environment(list(Internal = as.name(".Internal")))))
 })
+
+require_suggested <- function(pkg) {
+  if (!requireNamespace(pkg, quietly = TRUE)) {
+    stop("Please install ", pkg, " package.", call. = FALSE)
+  }
+}
