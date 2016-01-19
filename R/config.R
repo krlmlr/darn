@@ -5,9 +5,8 @@ PACKAGE_NAME <- unname(read.dcf("DESCRIPTION")[1L, "Package"])
 
 CONFIG_FILE_NAME <- "Darnfile"
 
-#' @importFrom utils glob2rx
 #' @importFrom rprojroot has_file
-root_criterion <- has_file(glob2rx(CONFIG_FILE_NAME))
+root_criterion <- has_file(CONFIG_FILE_NAME)
 
 #' @importFrom rprojroot make_find_root_file
 root_file_path <- make_find_root_file(root_criterion)
