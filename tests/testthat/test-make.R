@@ -63,6 +63,20 @@ if (TEST_MAKE) {
       )
       expect_true(file.exists(f("out/dir/B.rdx")))
     })
+
+    test_that("can make env project", {
+      f <- setup_scenario("env")
+
+      create_makefile(f())
+      withr::with_envvar(
+        c(R_LIBS=paste(.libPaths(), collapse = ":")),
+        {
+          #withr::with_dir(f(), system("xterm"))
+          expect_equal(run_make("-C", f()), 0L)
+        }
+      )
+      expect_true(file.exists(f("out/FORTYTWO=42/TWENTYONE=21/src/B.rdx")))
+    })
   })
 
 } # if (TEST_MAKE) {
