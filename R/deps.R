@@ -106,7 +106,9 @@ parse_script_one <- function(path, base_dir) {
     exprs[init_call_idx],
     function(init_call) {
       init_call[[1]] <- quote(lazyeval::lazy_dots)
-      get_init_deps_list(eval(init_call))
+      init_args <- eval(init_call)
+      init_args <- init_args[names(init_args) %nin% names(formals(init))]
+      get_init_deps_list(init_args)
     }
   )
   deps <- unlist(deps, recursive = FALSE)
