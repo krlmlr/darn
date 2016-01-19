@@ -71,7 +71,7 @@ parse_script <- function(path, base_dir) {
 parse_script_one <- function(path, base_dir) {
   base_dir <- normalizePath(base_dir)
   path <- normalizePath(path)
-  path_info <- get_path_info(path)
+  path_info <- get_path_info(path, expand_makefile_env_vars)
 
   exprs <- parse(path)
   darn_calls <- vapply(
@@ -135,4 +135,12 @@ parse_script_one <- function(path, base_dir) {
     ),
     done = done
   )
+}
+
+#' @importFrom stats setNames
+expand_makefile_env_vars <- function(x) {
+  if (length(x) == 0L) {
+    return()
+  }
+  setNames(paste0("${", x, "}"), x)
 }
