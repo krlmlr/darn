@@ -75,7 +75,7 @@ if (TEST_MAKE) {
           expect_equal(run_make("-C", f()), 0L)
         }
       )
-      expect_true(file.exists(f("out/FORTYTWO=42/TWENTYONE=21/src/B.rdx")))
+      expect_true(file.exists(f("out/FORTYTWO-42/TWENTYONE-21/src/B.rdx")))
     })
   })
 

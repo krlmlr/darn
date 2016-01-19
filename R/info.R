@@ -47,7 +47,7 @@ get_env_dir <- function(env_vals) {
     return("")
   }
 
-  env_dir_parts <- mapply(function(name, value) paste0(name, "=", value),
+  env_dir_parts <- mapply(function(name, value) paste0(name, "-", value),
                           names(env_vals), env_vals)
   env_dir <- do.call(file.path, as.list(env_dir_parts))
 }
