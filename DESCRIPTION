@@ -24,17 +24,9 @@ Imports:
     purrr,
     tibble
 Suggests:
+    graph,
     testthat,
     withr,
     devtools,
     rmarkdown
 RoxygenNote: 5.0.1.9000
-Collate:
-    'config.R'
-    'darn.R'
-    'deps.R'
-    'info.R'
-    'make.R'
-    'process.R'
-    'utils.R'
-    'zzz-autoroxy.R'
