@@ -6,21 +6,28 @@
 \usage{
 create_makefile(root_dir, file_name = "Makefile",
   dep_file_name = "Dependencies", src_dir = ".", out_dir = ".",
+  env_vars = NULL,
   script = "Rscript -e \\"rmarkdown::render('$<', 'html_document')\\"")
 }
 \arguments{
-\item{root_dir}{\code{character[1]}\cr The root directory}
+\item{root_dir}{\code{[character(1)]}\cr
+The root directory}
 
-\item{file_name}{\code{character[1]}\cr File path (relative to the root
-directory), default: \code{"Makefile"}}
+\item{file_name}{\code{[character(1)]}\cr
+File path (relative to the root directory), default: \code{"Makefile"}}
 
-\item{dep_file_name}{\code{character[1]}\cr File path (relative to the root
-directory), default: \code{"Dependencies"}}
+\item{dep_file_name}{\code{[character(1)]}\cr
+File path (relative to the root directory), default: \code{"Dependencies"}}
 
-\item{src_dir, out_dir}{\code{character[1]}\cr Source and output directories
-(relative to the root directory), default: \code{"."}}
+\item{src_dir, out_dir}{\code{[character(1)]}\cr
+Source and output directories (relative to the root directory), default:
+\code{"."}}
 
-\item{script}{\code{character[1]}\cr Script that processes the input files,
+\item{env_vars}{\code{[named list]}\cr
+Default values for environment variables that define configurations of the
+script, default: none}
+
+\item{script}{\code{[character]}\cr Script that processes the input files,
 default: a call to \code{rmarkdown::\link[rmarkdown]{render}}}
 }
 \description{

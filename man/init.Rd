@@ -5,13 +5,16 @@
 \alias{init_}
 \title{Init a stage}
 \usage{
-init_(..., .dots = NULL, envir = parent.frame())
+init_(..., .dots = NULL, env_vars = NULL, envir = parent.frame())
 }
 \arguments{
 \item{...}{Dependencies}
 
-\item{.dots}{\code{list}\cr
+\item{.dots}{\code{[list]}\cr
 Additional dependencies as list}
+
+\item{env_vars}{\code{[character]}\cr
+Environment variables that define the configuration of the script}
 }
 \description{
 Add a call to this functions as first statement to each of your scripts,
