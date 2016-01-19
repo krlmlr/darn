@@ -60,7 +60,9 @@ create_makefile <- function(
     MakefileR::make_comment("This makes sure that the dependencies are created initially, and updated with each invocation") +
     MakefileR::make_rule(R_FILE_TARGETS, "${dep_file_name}") +
     MakefileR::make_rule("${dep_file_name}", script =
-      paste0("Rscript -e \"", PACKAGE_NAME, "::create_dep_file('.', '$@', '${src_dir}')\"")) +
+      paste0("Rscript -e \"", PACKAGE_NAME, "::",
+             as.character(quote(create_dep_file)),
+             "('.', '$@', '${src_dir}')\"")) +
 
     MakefileR::make_comment("This defines the dependencies between the R scripts") +
     MakefileR::make_text("include ${dep_file_name}")
