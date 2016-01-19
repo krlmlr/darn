@@ -61,6 +61,10 @@ get_init_deps_list <- function(.dots, ...) {
   }
 
   deps <- unlist(vals)
+  if (length(deps) == 0L) {
+    return(NULL)
+  }
+
   deps_list <- vector("list", length(deps))
   names(deps_list) <- paste0(deps, ".R")
 
