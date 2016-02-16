@@ -95,10 +95,10 @@ parse_script_one <- function(path, base_dir) {
 
   if (length(done_call_idx) == 0L) {
     warning("No call to done() found, ", path,
-            " cannot be used as parent for other scripts.")
+            " cannot be used as parent for other scripts.", call. = FALSE)
   } else if (length(done_call_idx) > 1L) {
     warning("More than one call to done() found in ", path,
-            ", using the last.")
+            ", using the last.", call. = FALSE)
     done_call_idx <- done_call_idx[length(done_call_idx)]
   }
 
