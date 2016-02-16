@@ -33,6 +33,8 @@ create_makefile <- function(
       MakefileR::make_comment("This file contains the configuration of the R script network.") +
       create_config_group(dep_file_name, src_dir, out_dir, env_vars, script)
     MakefileR::write_makefile(config_file, config_path)
+  } else {
+    warning("Not overwriting config file ", config_path, call. = FALSE)
   }
 
   my_formals <- formals()
