@@ -8,8 +8,7 @@ CONFIG_FILE_NAME <- "Darnfile"
 #' @importFrom rprojroot has_file
 root_criterion <- has_file(CONFIG_FILE_NAME)
 
-#' @importFrom rprojroot make_find_root_file
-root_file_path <- make_find_root_file(root_criterion)
+root_file_path <- root_criterion$find_file
 
 #' @importFrom stats setNames
 read_config <- function(root) {

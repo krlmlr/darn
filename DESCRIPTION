@@ -11,7 +11,20 @@ License: GPL-3
 LazyData: true
 Encoding: UTF-8
 GitHub: https://github.com/krlmlr/darn
-Imports: MakefileR (>= 1.0-2), lazyeval, lazyforward, rprojroot,
-        memoise, kimisc, R.utils, purrr, tibble
-Suggests: graph, testthat, withr, devtools, rmarkdown
-RoxygenNote: 5.0.1.9000
+Imports:
+    MakefileR (>= 1.0-2),
+    lazyeval,
+    lazyforward,
+    rprojroot (>= 0.1-1),
+    memoise,
+    kimisc,
+    R.utils,
+    purrr,
+    tibble
+Suggests:
+    graph,
+    testthat,
+    withr,
+    devtools,
+    rmarkdown
+RoxygenNote: 5.0.1
