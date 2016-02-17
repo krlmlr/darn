@@ -14,6 +14,8 @@ relative_to <- function(path, root) {
   R.utils::getRelativePath(path, root)
 }
 
+# This declaration avoids R CMD check noticing that we are doing naughty things
+# such as calling .Internal().
 #' @importFrom memoise memoise
 getMakeLazyLoadDB <- memoise(function() {
   eval(bquote(function (from, filebase, compress = TRUE, ascii = FALSE,
