@@ -104,6 +104,7 @@ if (TEST_MAKE) {
       expect_true(file.exists(f("out/FORTYTWO-43/TWENTYONE-22/src/B.rdx")))
       expect_true(file.exists(f("out/FORTYTWO-44/TWENTYONE-23/src/B.rdx")))
     })
-  })
+
+  }) # withr::with_temp_libpaths({
 
 } # if (TEST_MAKE) {
