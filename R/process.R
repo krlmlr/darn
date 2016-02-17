@@ -86,7 +86,8 @@ init_one <- function(r_file_name, deps, path_info, envir) {
     if (Sys.getenv("MAKEFLAGS") == "") {
       source(r_file, local = TRUE)
     } else {
-      stop("Not running ", r_file, " from within make. Check dependencies")
+      stop("Not running ", r_file, " from within make. Check dependencies",
+           call. = FALSE)
     }
   }
 
