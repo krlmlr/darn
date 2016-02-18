@@ -5,6 +5,11 @@ get_path_info <- function(path = NULL, .get_env_vals = NULL) {
     path <- gsub("(.*)[.]spin[.]Rmd$", "\\1.R", path) ## HACK HACK HACK
   }
 
+  if (!file.exists(path)) {
+    stop("Location of current file computed as ", path, " but not found.",
+         call. = FALSE)
+  }
+
   source_dir <- dirname(path)
 
   root <- root_file_path(path = source_dir)
