@@ -68,6 +68,13 @@ parse_script <- function(path, base_dir) {
   lapply(path, parse_script_one, base_dir = base_dir)
 }
 
+remove_assignments <- function(x) {
+  if (is.call(x) && identical(as.character(x[[1L]]), "<-"))
+    remove_assignments(x[[3L]])
+  else
+    x
+}
+
 find_darn_call <- function(x) {
   if (is.call(x)) {
     y <- x[[1L]]
@@ -86,6 +93,7 @@ parse_script_one <- function(path, base_dir) {
   path_info <- get_path_info(path, expand_makefile_env_vars)
 
   exprs <- parse(path)
+  exprs <- lapply(exprs, remove_assignments)
   darn_calls <- vapply(exprs, find_darn_call, character(1L))
 
   init_call_idx <- which(darn_calls == "init")

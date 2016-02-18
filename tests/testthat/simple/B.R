@@ -1,4 +1,4 @@
 # Single dependency
-darn::init("A")
+path_info <- darn::init("A")
 
 darn::done(twentyone = fortytwo / 2)
