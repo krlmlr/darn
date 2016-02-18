@@ -12,7 +12,7 @@ root_file_path <- root_criterion$find_file
 
 #' @importFrom stats setNames
 read_config <- function(root) {
-  config <- file.path(root, CONFIG_FILE_NAME)
+  config <- file_path(root, CONFIG_FILE_NAME)
   config_contents <- readLines(config)
 
   CONFIG_PATTERN <- "([^=?]+)[?]?=(.*)"

@@ -23,9 +23,9 @@ create_makefile <- function(
   src_dir = ".", out_dir = ".", env_vars = NULL,
   script = "Rscript -e \"rmarkdown::render('$<', 'html_document')\"") {
 
-  out_dir <- relative_to(file.path(root_dir, out_dir), root_dir)
+  out_dir <- relative_to(file_path(root_dir, out_dir), root_dir)
 
-  config_path <- file.path(root_dir, CONFIG_FILE_NAME)
+  config_path <- file_path(root_dir, CONFIG_FILE_NAME)
 
   if (!file.exists(config_path)) {
     config_file <-
@@ -69,7 +69,7 @@ create_makefile <- function(
     MakefileR::make_comment("This defines the dependencies between the R scripts") +
     MakefileR::make_text("include ${dep_file_name}")
 
-  MakefileR::write_makefile(make_file, file.path(root_dir, file_name))
+  MakefileR::write_makefile(make_file, file_path(root_dir, file_name))
 }
 
 create_config_group <- function(dep_file_name, src_dir, out_dir, env_vars,

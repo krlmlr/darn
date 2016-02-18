@@ -6,11 +6,14 @@ strip_extension <- function(path) {
   gsub("[.][^.]*$", "", path)
 }
 
-file_path <- function(...) {
-  components <- list(...)
+file_path <- function(..., .dots = NULL) {
+  components <- c(list(...), .dots)
   components <- components[!vapply(components, is.null, logical(1))]
   components <- components[!vapply(components, function(x) all(x == "."),
                                    logical(1))]
+
+  if (length(components) == 0L)
+    components <- list(".")
 
   do.call(file.path, components)
 }
