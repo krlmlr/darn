@@ -16,12 +16,13 @@
 #'   Default values for environment variables that define configurations of the
 #'   script, default: none
 #' @param script \code{[character]}\cr Script that processes the input files,
-#'   default: a call to \code{rmarkdown::\link[rmarkdown]{render}}
+#'   default: a call to \code{run} (recommmended) that invokes
+#'   \code{ezknitr::\link[ezknitr]{ezspin}}
 #' @export
 create_makefile <- function(
   root_dir, file_name = "Makefile", dep_file_name = "Dependencies",
   src_dir = ".", out_dir = ".", env_vars = NULL,
-  script = "Rscript -e \"rmarkdown::render('$<', 'html_document')\"") {
+  script = "Rscript -e \"darn::run(file = '$<', ezknitr::ezspin, wd = '.', out_dir = '$(dir $@)', verbose = TRUE, keep_rmd = TRUE)\"") {
 
   out_dir <- relative_to(file_path(root_dir, out_dir), root_dir)
 

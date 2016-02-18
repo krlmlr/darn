@@ -1,8 +1,20 @@
 #' @importFrom tibble lst
 get_path_info <- function(path = NULL, .get_env_vals = NULL) {
+  path <- (
+    path
+    %||% .darn_env$current_file
+    %||% kimisc::thisfile()
+  )
+
   if (is.null(path)) {
-    path <- kimisc::thisfile()
-    path <- gsub("(.*)[.]spin[.]Rmd$", "\\1.R", path) ## HACK HACK HACK
+    stop("Could not determine source file path.", call. = FALSE)
+  }
+
+  path <- gsub("(.*)[.]spin[.]Rmd$", "\\1.R", path) ## HACK HACK HACK
+
+  if (!file.exists(path)) {
+    stop("Location of current file computed as ", path, " but not found.",
+         call. = FALSE)
   }
 
   source_dir <- dirname(path)
