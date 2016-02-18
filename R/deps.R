@@ -11,13 +11,13 @@
 #' @export
 create_dep_file <- function(root_dir, file_name = "Dependencies",
                             src_dir = ".") {
-  deps_file <- create_deps_rules(root_dir, file.path(root_dir, src_dir))
-  MakefileR::write_makefile(deps_file, file.path(root_dir, file_name))
+  deps_file <- create_deps_rules(root_dir, file_path(root_dir, src_dir))
+  MakefileR::write_makefile(deps_file, file_path(root_dir, file_name))
 }
 
 create_deps_rules <- function(root_dir, src_dir = root_dir) {
-  web <- parse_script(dir(src_dir, pattern = R_FILE_PATTERN, full.names = TRUE),
-                      base_dir = root_dir)
+  files <- dir(src_dir, pattern = R_FILE_PATTERN, full.names = TRUE)
+  web <- parse_script(files, base_dir = root_dir)
   deps <- get_deps(web)
 
   dep_rules <- mapply(
@@ -95,10 +95,10 @@ parse_script_one <- function(path, base_dir) {
 
   if (length(done_call_idx) == 0L) {
     warning("No call to done() found, ", path,
-            " cannot be used as parent for other scripts.")
+            " cannot be used as parent for other scripts.", call. = FALSE)
   } else if (length(done_call_idx) > 1L) {
     warning("More than one call to done() found in ", path,
-            ", using the last.")
+            ", using the last.", call. = FALSE)
     done_call_idx <- done_call_idx[length(done_call_idx)]
   }
 

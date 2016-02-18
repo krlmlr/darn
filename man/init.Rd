@@ -19,6 +19,9 @@ Environment variables that define the configuration of the script}
 \item{envir}{\code{[environment]}\cr
 Environment to load the data into. Default: parent frame.}
 }
+\value{
+A named list that contains path information about the current script.
+}
 \description{
 Add a call to this functions as first statement to each of your scripts,
 using double-colon notation (\code{darn::init()}).  A script without such a

@@ -6,6 +6,18 @@ strip_extension <- function(path) {
   gsub("[.][^.]*$", "", path)
 }
 
+file_path <- function(..., .dots = NULL) {
+  components <- c(list(...), .dots)
+  components <- components[!vapply(components, is.null, logical(1))]
+  components <- components[!vapply(components, function(x) all(x == "."),
+                                   logical(1))]
+
+  if (length(components) == 0L)
+    components <- list(".")
+
+  do.call(file.path, components)
+}
+
 relative_to <- function(path, root) {
   if (length(path) == 0L) {
     return ()
@@ -14,6 +26,8 @@ relative_to <- function(path, root) {
   R.utils::getRelativePath(path, root)
 }
 
+# This declaration avoids R CMD check noticing that we are doing naughty things
+# such as calling .Internal().
 #' @importFrom memoise memoise
 getMakeLazyLoadDB <- memoise(function() {
   eval(bquote(function (from, filebase, compress = TRUE, ascii = FALSE,

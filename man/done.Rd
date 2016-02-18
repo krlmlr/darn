@@ -16,6 +16,9 @@ Additional objects as list}
 \item{.compress}{\code{logical(1)}\cr
 Compress output (default: \code{FALSE})}
 }
+\value{
+A named list that contains path information about the current script.
+}
 \description{
 Add a call to this functions as last statement to each of your scripts,
 using double-colon notation (\code{darn::done()}).  A script without such a

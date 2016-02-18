@@ -16,16 +16,17 @@
 #'   Default values for environment variables that define configurations of the
 #'   script, default: none
 #' @param script \code{[character]}\cr Script that processes the input files,
-#'   default: a call to \code{rmarkdown::\link[rmarkdown]{render}}
+#'   default: a call to \code{run} (recommmended) that invokes
+#'   \code{ezknitr::\link[ezknitr]{ezspin}}
 #' @export
 create_makefile <- function(
   root_dir, file_name = "Makefile", dep_file_name = "Dependencies",
   src_dir = ".", out_dir = ".", env_vars = NULL,
-  script = "Rscript -e \"rmarkdown::render('$<', 'html_document')\"") {
+  script = "Rscript -e \"darn::run(file = '$<', ezknitr::ezspin, wd = '.', out_dir = '$(dir $@)', verbose = TRUE, keep_rmd = TRUE)\"") {
 
-  out_dir <- relative_to(file.path(root_dir, out_dir), root_dir)
+  out_dir <- relative_to(file_path(root_dir, out_dir), root_dir)
 
-  config_path <- file.path(root_dir, CONFIG_FILE_NAME)
+  config_path <- file_path(root_dir, CONFIG_FILE_NAME)
 
   if (!file.exists(config_path)) {
     config_file <-
@@ -33,6 +34,8 @@ create_makefile <- function(
       MakefileR::make_comment("This file contains the configuration of the R script network.") +
       create_config_group(dep_file_name, src_dir, out_dir, env_vars, script)
     MakefileR::write_makefile(config_file, config_path)
+  } else {
+    warning("Not overwriting config file ", config_path, call. = FALSE)
   }
 
   my_formals <- formals()
@@ -67,7 +70,7 @@ create_makefile <- function(
     MakefileR::make_comment("This defines the dependencies between the R scripts") +
     MakefileR::make_text("include ${dep_file_name}")
 
-  MakefileR::write_makefile(make_file, file.path(root_dir, file_name))
+  MakefileR::write_makefile(make_file, file_path(root_dir, file_name))
 }
 
 create_config_group <- function(dep_file_name, src_dir, out_dir, env_vars,
