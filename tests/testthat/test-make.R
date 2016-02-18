@@ -3,8 +3,10 @@ context("make")
 if (TEST_MAKE) {
 
   withr::with_temp_libpaths({
-    devtools::install(dependencies = FALSE, upgrade_dependencies = FALSE, quiet = TRUE)
-    expect_null(NULL)
+    test_that("prepare: install", {
+      devtools::install(dependencies = FALSE, upgrade_dependencies = FALSE, quiet = TRUE)
+      expect_null(NULL)
+    })
 
     test_that("can make simple project", {
       f <- setup_scenario("simple")
