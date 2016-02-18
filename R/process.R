@@ -74,10 +74,10 @@ get_init_deps_list <- function(.dots, ...) {
 }
 
 init_one <- function(r_file_name, deps, path_info, envir) {
-  r_file <- file.path(path_info$source_dir, r_file_name)
+  r_file <- file_path(path_info$source_dir, r_file_name)
   file_base <- strip_extension(r_file_name)
 
-  rdx_base <- file.path(path_info$target_dir, file_base)
+  rdx_base <- file_path(path_info$target_dir, file_base)
   rdx_file <- sprintf("%s.rdx", rdx_base)
 
   info <- file.info(r_file, rdx_file)

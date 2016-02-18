@@ -21,9 +21,9 @@ get_path_info <- function(path = NULL, .get_env_vals = NULL) {
 
   relative_source_dir <- relative_to(source_dir, root)
 
-  target_dir <- file.path(root, out_dir, env_dir, relative_source_dir)
+  target_dir <- file_path(root, out_dir, env_dir, relative_source_dir)
 
-  target_base <- file.path(target_dir, strip_extension(basename(path)))
+  target_base <- file_path(target_dir, strip_extension(basename(path)))
 
   lst(path, source_dir, root, target_dir, target_base, env_vals)
 }
@@ -56,12 +56,7 @@ get_env_vals <- function(env_vars, config) {
 }
 
 get_env_dir <- function(env_vals) {
-  # Special case to work around file.path behavior for zero-length input
-  if (length(env_vals) == 0L) {
-    return("")
-  }
-
   env_dir_parts <- mapply(function(name, value) paste0(name, "-", value),
                           names(env_vals), env_vals)
-  env_dir <- do.call(file.path, as.list(env_dir_parts))
+  env_dir <- file_path(.dots = as.list(env_dir_parts))
 }

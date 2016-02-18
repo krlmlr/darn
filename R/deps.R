@@ -11,13 +11,13 @@
 #' @export
 create_dep_file <- function(root_dir, file_name = "Dependencies",
                             src_dir = ".") {
-  deps_file <- create_deps_rules(root_dir, file.path(root_dir, src_dir))
-  MakefileR::write_makefile(deps_file, file.path(root_dir, file_name))
+  deps_file <- create_deps_rules(root_dir, file_path(root_dir, src_dir))
+  MakefileR::write_makefile(deps_file, file_path(root_dir, file_name))
 }
 
 create_deps_rules <- function(root_dir, src_dir = root_dir) {
-  web <- parse_script(dir(src_dir, pattern = R_FILE_PATTERN, full.names = TRUE),
-                      base_dir = root_dir)
+  files <- dir(src_dir, pattern = R_FILE_PATTERN, full.names = TRUE)
+  web <- parse_script(files, base_dir = root_dir)
   deps <- get_deps(web)
 
   dep_rules <- mapply(
