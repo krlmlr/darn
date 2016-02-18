@@ -16,8 +16,8 @@ create_dep_file <- function(root_dir, file_name = "Dependencies",
 }
 
 create_deps_rules <- function(root_dir, src_dir = root_dir) {
-  web <- parse_script(dir(src_dir, pattern = R_FILE_PATTERN, full.names = TRUE),
-                      base_dir = root_dir)
+  files <- dir(src_dir, pattern = R_FILE_PATTERN, full.names = TRUE)
+  web <- parse_script(files, base_dir = root_dir)
   deps <- get_deps(web)
 
   dep_rules <- mapply(
