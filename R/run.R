@@ -19,6 +19,6 @@
 run <- function(file, fun, ...) {
   stopifnot(!exists("current_file", .darn_env))
   .darn_env$current_file <- normalizePath(file)
-  on.exit(rm("current_file", .darn_env))
+  on.exit(rm("current_file", pos = .darn_env))
   fun(file, ...)
 }
