@@ -16,6 +16,7 @@ NULL
 #'   Environment variables that define the configuration of the script
 #' @param envir \code{[environment]}\cr
 #'   Environment to load the data into. Default: parent frame.
+#' @return A named list that contains path information about the current script.
 #' @rdname init
 init_ <- function(..., .dots = NULL, env_vars = NULL,
                   envir = parent.frame()) {
@@ -29,6 +30,7 @@ init_ <- function(..., .dots = NULL, env_vars = NULL,
     path_info = path_info, envir = envir))
 
   assign_env_vals(path_info$env_vals, envir)
+  invisible(path_info)
 }
 
 check_env_vals <- function(env_vars, path_info) {
@@ -117,6 +119,7 @@ NULL
 #'   Additional objects as list
 #' @param .compress \code{logical(1)}\cr
 #'   Compress output (default: \code{FALSE})
+#' @return A named list that contains path information about the current script.
 #' @rdname done
 done_ <- function(..., .dots = NULL, .compress = FALSE) {
   path_info <- get_path_info()
@@ -126,6 +129,7 @@ done_ <- function(..., .dots = NULL, .compress = FALSE) {
 
   dir.create(path_info$target_dir, showWarnings = FALSE, recursive = TRUE)
   getMakeLazyLoadDB()(vals, path_info$target_base, compress = .compress)
+  invisible(path_info)
 }
 
 get_done_dots <- function(.dots, ...) {
