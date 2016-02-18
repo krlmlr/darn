@@ -1,3 +1,14 @@
+Version 0.2-1 (2016-02-18)
+===
+
+- The `Makefile` now by default calls the new `run()` function which tracks the current file in a robust fashion.
+- Use `ezknitr::ezspin()` by default for rendering (#22).
+- `init()` and `done()` return path info, invisibly.
+- New `file_path()` to simplify working with edge cases such as empty path components and `"."` components.
+- If `create_makefile()` doesn't overwrite the config file, a warning is given.
+- Use `call. = FALSE` in `warning()` calls to avoid confusing error messages.
+
+
 Version 0.2 (2016-01-19)
 ===
 
