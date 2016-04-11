@@ -140,3 +140,14 @@ get_done_dots <- function(.dots, ...) {
 #' @inheritParams done_
 #' @importFrom lazyforward lazyforward
 done <- lazyforward("done_")
+
+#' Returns target directory
+#'
+#' Can be run by the scripts to determine the write location for additional
+#' files.
+#'
+#' @export
+get_target_dir <- function() {
+  path_info <- get_path_info()
+  path_info$target_dir
+}
