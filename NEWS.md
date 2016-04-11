@@ -1,3 +1,12 @@
+Version 0.2-2 (2016-04-11)
+===
+
+- New argument `path` to `init()`, if automatic detection of current script doesn't work.
+- New `get_target_dir()` returns target directory.
+- Support memoizing return values from `init()` and `done()`.
+- Properly clear current script name in `run()`.
+
+
 Version 0.2-1 (2016-02-18)
 ===
 
