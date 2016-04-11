@@ -16,11 +16,13 @@ NULL
 #'   Environment variables that define the configuration of the script
 #' @param envir \code{[environment]}\cr
 #'   Environment to load the data into. Default: parent frame.
+#' @param path \code{[character(1)]}\cr
+#'   The path of the current script, useful if automatic detection fails.
 #' @return A named list that contains path information about the current script.
 #' @rdname init
 init_ <- function(..., .dots = NULL, env_vars = NULL,
-                  envir = parent.frame()) {
-  path_info <- get_path_info()
+                  envir = parent.frame(), path = NULL) {
+  path_info <- get_path_info(path)
 
   check_env_vals(env_vars, path_info)
 
