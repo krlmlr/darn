@@ -5,7 +5,8 @@
 \alias{init_}
 \title{Init a stage}
 \usage{
-init_(..., .dots = NULL, env_vars = NULL, envir = parent.frame())
+init_(..., .dots = NULL, env_vars = NULL, envir = parent.frame(),
+  path = NULL)
 }
 \arguments{
 \item{...}{Dependencies}
@@ -18,6 +19,9 @@ Environment variables that define the configuration of the script}
 
 \item{envir}{\code{[environment]}\cr
 Environment to load the data into. Default: parent frame.}
+
+\item{path}{\code{[character(1)]}\cr
+The path of the current script, useful if automatic detection fails.}
 }
 \value{
 A named list that contains path information about the current script.
