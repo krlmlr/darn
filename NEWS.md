@@ -1,35 +1,35 @@
-# darn 0.2-4 (2016-07-07)
+# darn 0.3 (2016-07-07)
+
+Bug fixes
+---------
 
 - `Dependencies` file is updated properly (#23).
-- Split `make` tests for better parallelization.
-- Rename `source_dir` to `src_dir` and `base_dir` to `root_dir` (#25).
-
-
-# darn 0.2-3 (2016-07-07)
-
 - Reverse edges in `dep_graph()`.
-- Use `rflow`.
 
-
-Version 0.2-2 (2016-04-11)
-===
+API
+---
 
 - New argument `path` to `init()`, if automatic detection of current script doesn't work.
 - New `get_target_dir()` returns target directory.
-- Support memoizing return values from `init()` and `done()`.
-- Properly clear current script name in `run()`.
+- `init()` and `done()` return path info, invisibly.
 
+Features
+---
 
-Version 0.2-1 (2016-02-18)
-===
-
+- Calls like `x <- darn::init()` and `x <- darn::done()` are also detected in source files.
 - The `Makefile` now by default calls the new `run()` function which tracks the current file in a robust fashion.
 - Use `ezknitr::ezspin()` by default for rendering (#22).
-- `init()` and `done()` return path info, invisibly.
-- New `file_path()` to simplify working with edge cases such as empty path components and `"."` components.
 - If `create_makefile()` doesn't overwrite the config file, a warning is given.
-- Use `call. = FALSE` in `warning()` calls to avoid confusing error messages.
 
+Internal
+--------
+
+- Use `call. = FALSE` in `warning()` calls to avoid confusing error messages.
+- Split `make` tests for better parallelization.
+- Rename `source_dir` to `src_dir` and `base_dir` to `root_dir` (#25).
+- Properly clear current script name in `run()`.
+- New `file_path()` to simplify working with edge cases such as empty path components and `"."` components.
+- Use `rflow`.
 
 Version 0.2 (2016-01-19)
 ===
