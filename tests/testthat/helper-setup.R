@@ -1,7 +1,5 @@
-TEST_MAKE <- TRUE
 TEST_MAKE_VERBOSE <- TRUE
 
-TEST_MAKE <- FALSE
 TEST_MAKE_VERBOSE <- FALSE
 
 setup_scenario <- function(path, unlink_darnfile = FALSE) {
