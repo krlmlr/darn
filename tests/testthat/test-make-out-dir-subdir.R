@@ -7,16 +7,11 @@ withr::with_temp_libpaths({
   })
 
   test_that("can make subdir project with out_dir", {
-    f <- setup_scenario("subdir", unlink_darnfile = TRUE)
-
-    create_makefile(f(), src_dir = "dir", out_dir = "out")
-    withr::with_envvar(
-      c(R_LIBS=paste(.libPaths(), collapse = ":")),
-      {
-        #withr::with_dir(f(), system("xterm"))
-        expect_equal(run_make("-C", f(), "out/dir/B.rdx"), 0L)
-      }
-    )
-    expect_true(file.exists(f("out/dir/B.rdx")))
+    scenario_name <- "subdir"
+    src_dir <- "dir"
+    out_dir <- "out"
+    unlink_darnfile <- TRUE
+    makefile_warning <- NA
+    test_scenario(scenario_name, src_dir, out_dir, unlink_darnfile, makefile_warning)
   })
 })

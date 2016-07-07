@@ -7,16 +7,11 @@ withr::with_temp_libpaths({
   })
 
   test_that("can make out_dir project", {
-    f <- setup_scenario("out_dir")
-
-    expect_warning(create_makefile(f()), "Not overwriting")
-    withr::with_envvar(
-      c(R_LIBS=paste(.libPaths(), collapse = ":")),
-      {
-        #withr::with_dir(f(), system("xterm"))
-        expect_equal(run_make("-C", f(), "out/B.rdx"), 0L)
-      }
-    )
-    expect_true(file.exists(f("out/B.rdx")))
+    scenario_name <- "out_dir"
+    src_dir <- "."
+    out_dir <- "out"
+    unlink_darnfile <- FALSE
+    makefile_warning <- "Not overwriting"
+    test_scenario(scenario_name, src_dir, out_dir, unlink_darnfile, makefile_warning)
   })
 })
