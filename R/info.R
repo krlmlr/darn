@@ -17,9 +17,9 @@ get_path_info <- function(path = NULL, .get_env_vals = NULL) {
          call. = FALSE)
   }
 
-  source_dir <- dirname(path)
+  src_dir <- dirname(path)
 
-  root <- root_file_path(path = source_dir)
+  root <- root_file_path(path = src_dir)
   config <- read_config(root)
   out_dir <- config[["out_dir"]] %||% "."
 
@@ -31,13 +31,13 @@ get_path_info <- function(path = NULL, .get_env_vals = NULL) {
   env_vals <- .get_env_vals(env_vars, config)
   env_dir <- get_env_dir(env_vals)
 
-  relative_source_dir <- relative_to(source_dir, root)
+  relative_src_dir <- relative_to(src_dir, root)
 
-  target_dir <- file_path(root, out_dir, env_dir, relative_source_dir)
+  target_dir <- file_path(root, out_dir, env_dir, relative_src_dir)
 
   target_base <- file_path(target_dir, strip_extension(basename(path)))
 
-  lst(path, source_dir, root, target_dir, target_base, env_vals)
+  lst(path, src_dir, root, target_dir, target_base, env_vals)
 }
 
 get_env_vars <- function(config) {

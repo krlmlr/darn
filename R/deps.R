@@ -17,7 +17,7 @@ create_dep_file <- function(root_dir, file_name = "Dependencies",
 
 create_deps_rules <- function(root_dir, src_dir = root_dir) {
   files <- dir(src_dir, pattern = R_FILE_PATTERN, full.names = TRUE)
-  web <- parse_script(files, base_dir = root_dir)
+  web <- parse_script(files, root_dir = root_dir)
   deps <- get_deps(web)
 
   dep_rules <- mapply(
@@ -63,9 +63,9 @@ get_deps_one <- function(parsed_one, relative_to) {
   parsed_one[["init"]][["deps"]]
 }
 
-parse_script <- function(path, base_dir) {
-  names(path) <- relative_to(path, base_dir)
-  lapply(path, parse_script_one, base_dir = base_dir)
+parse_script <- function(path, root_dir) {
+  names(path) <- relative_to(path, root_dir)
+  lapply(path, parse_script_one, root_dir = root_dir)
 }
 
 remove_assignments <- function(x) {
@@ -87,8 +87,8 @@ find_darn_call <- function(x) {
   NA_character_
 }
 
-parse_script_one <- function(path, base_dir) {
-  base_dir <- normalizePath(base_dir)
+parse_script_one <- function(path, root_dir) {
+  root_dir <- normalizePath(root_dir)
   path <- normalizePath(path)
   path_info <- get_path_info(path, expand_makefile_env_vars)
 
@@ -118,8 +118,8 @@ parse_script_one <- function(path, base_dir) {
     }
   )
   deps <- unlist(deps, recursive = FALSE)
-  names(deps) <- relative_to(file.path(path_info$source_dir, names(deps)),
-                             base_dir)
+  names(deps) <- relative_to(file.path(path_info$src_dir, names(deps)),
+                             root_dir)
 
   done <- if (length(done_call_idx) > 0L) {
     done_call <- exprs[[done_call_idx]]
@@ -128,9 +128,9 @@ parse_script_one <- function(path, base_dir) {
     list(names = names(done_lazy))
   }
 
-  if (normalizePath(path_info$root) != base_dir) {
+  if (normalizePath(path_info$root) != root_dir) {
     stop("Project root for file ", path, " different from given base directory ",
-         base_dir, call. = FALSE)
+         root_dir, call. = FALSE)
   }
 
   list(

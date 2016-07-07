@@ -1,3 +1,10 @@
+# darn 0.2-4 (2016-07-07)
+
+- `Dependencies` file is updated properly (#23).
+- Split `make` tests for better parallelization.
+- Rename `source_dir` to `src_dir` and `base_dir` to `root_dir` (#25).
+
+
 # darn 0.2-3 (2016-07-07)
 
 - Reverse edges in `dep_graph()`.
