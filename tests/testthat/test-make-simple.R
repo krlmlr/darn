@@ -7,7 +7,9 @@ withr::with_temp_libpaths({
   })
 
   test_that("can make simple project", {
-    f <- setup_scenario("simple")
+    scenario_name <- "simple"
+    out_dir <- "."
+    f <- setup_scenario(scenario_name)
 
     expect_warning(create_makefile(f()), "Not overwriting")
 
@@ -21,7 +23,7 @@ withr::with_temp_libpaths({
       }
     )
     expect_true(file.exists(f("Dependencies")))
-    expect_true(file.exists(f("B.rdx")))
+    expect_true(file.exists(f(out_dir, "B.rdx")))
 
     writeLines("darn::done()", f("C.R"))
     withr::with_envvar(
@@ -31,9 +33,10 @@ withr::with_temp_libpaths({
         expect_equal(run_make("-C", f()), 0L)
       }
     )
-    expect_true(file.exists(f("C.rdx")))
+    expect_true(file.exists(f(out_dir, "C.rdx")))
 
-    unlink(f(c("B.R", "B.rdb", "B.rdx")))
+    unlink(f("B.R"))
+    unlink(f(out_dir, c("B.rdb", "B.rdx")))
     withr::with_envvar(
       c(R_LIBS=paste(.libPaths(), collapse = ":")),
       {
