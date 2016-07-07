@@ -24,8 +24,6 @@ init_ <- function(..., .dots = NULL, env_vars = NULL,
                   envir = parent.frame(), path = NULL) {
   path_info <- get_path_info(path)
 
-  remove_target_files(path_info)
-
   check_env_vals(env_vars, path_info)
 
   deps_list <- get_init_deps_list(.dots, ...)
@@ -35,13 +33,6 @@ init_ <- function(..., .dots = NULL, env_vars = NULL,
 
   assign_env_vals(path_info$env_vals, envir)
   invisible(path_info)
-}
-
-remove_target_files <- function(path_info) {
-  if (FALSE) {
-    "Need to add test that init() deletes target files."
-  }
-  unlink(paste0(path_info$target_base, c(".rdb", ".rdx")))
 }
 
 check_env_vals <- function(env_vars, path_info) {
