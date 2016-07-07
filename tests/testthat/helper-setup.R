@@ -22,11 +22,3 @@ run_make <- function(...) {
     system2("make", args = c(...), stdout = NULL, stderr = NULL)
   }
 }
-
-if (interactive()) {
-  test_that <- function(name, code) {
-    env <- new.env()
-    eval(substitute(code), env)
-  }
-  options(error = recover)
-}
