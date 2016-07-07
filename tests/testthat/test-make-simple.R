@@ -17,10 +17,42 @@ withr::with_temp_libpaths({
       c(R_LIBS=paste(.libPaths(), collapse = ":")),
       {
         #withr::with_dir(f(), system("xterm"))
-        expect_equal(run_make("-C", f(), "B.rdx"), 0L)
+        expect_equal(run_make("-C", f()), 0L)
       }
     )
     expect_true(file.exists(f("Dependencies")))
     expect_true(file.exists(f("B.rdx")))
+
+    writeLines("darn::done()", f("C.R"))
+    withr::with_envvar(
+      c(R_LIBS=paste(.libPaths(), collapse = ":")),
+      {
+        #withr::with_dir(f(), system("xterm"))
+        expect_equal(run_make("-C", f()), 0L)
+      }
+    )
+    expect_true(file.exists(f("C.rdx")))
+
+    unlink(f(c("B.R", "B.rdb", "B.rdx")))
+    withr::with_envvar(
+      c(R_LIBS=paste(.libPaths(), collapse = ":")),
+      {
+        #withr::with_dir(f(), system("xterm"))
+        expect_equal(run_make("-C", f()), 0L)
+      }
+    )
+    expect_false(all(grepl("B[.]R", readLines(f("Dependencies")))))
+
+    expect_lt_time(file.info(f("A.R"))$mtime, file.info(f("Dependencies"))$mtime)
+    writeLines(readLines(f("A.R")), f("A.R"))
+    expect_gt_time(file.info(f("A.R"))$mtime, file.info(f("Dependencies"))$mtime)
+    withr::with_envvar(
+      c(R_LIBS=paste(.libPaths(), collapse = ":")),
+      {
+        #withr::with_dir(f(), system("xterm"))
+        expect_equal(run_make("-C", f(), "--dry-run"), 0L)
+      }
+    )
+    expect_lt_time(file.info(f("A.R"))$mtime, file.info(f("Dependencies"))$mtime)
   })
 })
