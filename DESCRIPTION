@@ -1,7 +1,7 @@
 Package: darn
 Title: Directed Acyclic R Script Networks
-Version: 0.2-2
-Date: 2016-04-11
+Version: 0.2-3
+Date: 2016-07-07
 Authors@R: c( person("Kirill", "Müller", role = c("aut", "cre"), email
         = "krlmlr+r@mailbox.org"), person(family = "R Core team", role
         = "ctb", comment = "Code for lazy-load databases extracted from

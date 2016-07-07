@@ -15,5 +15,6 @@ dep_graph <- function(root_dir) {
   V <- names(deps)
   E <- lapply(deps, names)
   EL <- lapply(E, `%||%`, character())
-  graph::graphNEL(V, EL, edgemode = "directed")
+  g <- graph::graphNEL(V, EL, edgemode = "directed")
+  graph::reverseEdgeDirections(g)
 }

@@ -1,3 +1,9 @@
+# darn 0.2-3 (2016-07-07)
+
+- Reverse edges in `dep_graph()`.
+- Use `rflow`.
+
+
 Version 0.2-2 (2016-04-11)
 ===
 
