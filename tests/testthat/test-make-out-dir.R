@@ -10,12 +10,13 @@ withr::with_temp_libpaths({
     scenario_name <- "out_dir"
     src_dir <- "."
     out_dir <- "out"
-    f <- setup_scenario(scenario_name)
     unlink_darnfile <- FALSE
     makefile_warning <- "Not overwriting"
     f <- setup_scenario(scenario_name, unlink_darnfile)
 
-    expect_warning(create_makefile(f(), src_dir = src_dir), makefile_warning)
+    target_dir <- file.path(out_dir, src_dir)
+
+    expect_warning(create_makefile(f(), src_dir = src_dir, out_dir = out_dir), makefile_warning)
 
     expect_false(file.exists(f("Dependencies")))
 
@@ -27,7 +28,7 @@ withr::with_temp_libpaths({
       }
     )
     expect_true(file.exists(f("Dependencies")))
-    expect_true(file.exists(f(out_dir, "B.rdx")))
+    expect_true(file.exists(f(target_dir, "B.rdx")))
 
     writeLines("darn::done()", f(src_dir, "C.R"))
     withr::with_envvar(
@@ -37,10 +38,10 @@ withr::with_temp_libpaths({
         expect_equal(run_make("-C", f()), 0L)
       }
     )
-    expect_true(file.exists(f(out_dir, "C.rdx")))
+    expect_true(file.exists(f(target_dir, "C.rdx")))
 
     unlink(f("B.R"))
-    unlink(f(out_dir, c("B.rdb", "B.rdx")))
+    unlink(f(target_dir, c("B.rdb", "B.rdx")))
     withr::with_envvar(
       c(R_LIBS=paste(.libPaths(), collapse = ":")),
       {
