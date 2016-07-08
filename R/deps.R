@@ -37,7 +37,8 @@ create_deps_rules <- function(root_dir, src_dir = root_dir) {
 
   init <-
     MakefileR::makefile() +
-    MakefileR::make_rule("all", rdx_from_r(web, names(deps)))
+    MakefileR::make_group(
+      .dots = lapply(rdx_from_r(web, names(deps)), MakefileR::make_rule, targets = "all"))
 
   purrr::reduce(c(purrr::compact(dep_rules), process_rules),
                 `+`, .init = init)
