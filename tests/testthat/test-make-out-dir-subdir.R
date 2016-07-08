@@ -1,11 +1,6 @@
 context("make-out-dir-subdir")
 
-withr::with_temp_libpaths({
-  test_that("prepare: install", {
-    devtools::install(dependencies = FALSE, upgrade_dependencies = FALSE, quiet = TRUE, quick = TRUE)
-    expect_null(NULL)
-  })
-
+withr::with_libpaths(future::value(temp_lib), action = "prefix", {
   test_that("can make subdir project with out_dir", {
     scenario_name <- "subdir"
     src_dir <- "dir"

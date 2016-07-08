@@ -1,11 +1,6 @@
 context("make-env")
 
-withr::with_temp_libpaths({
-  test_that("prepare: install", {
-    devtools::install(dependencies = FALSE, upgrade_dependencies = FALSE, quiet = TRUE, quick = TRUE)
-    expect_null(NULL)
-  })
-
+withr::with_libpaths(future::value(temp_lib), action = "prefix", {
   test_that("can make env project", {
     f <- setup_scenario("env")
 
