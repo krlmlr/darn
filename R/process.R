@@ -88,7 +88,11 @@ init_one <- function(r_file_name, deps, path_info, envir) {
 
   if (is.na(info$mtime[[2]]) || diff(info$mtime) < 0) {
     if (Sys.getenv("MAKEFLAGS") == "") {
+      old_search <- search()
       source(r_file, local = TRUE)
+      if (!identical(search(), old_search)) {
+        warning("Script ", r_file, " changed search path.", call. = FALSE)
+      }
     } else {
       stop("Not running ", r_file, " from within make. Check dependencies",
            call. = FALSE)
