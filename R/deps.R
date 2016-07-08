@@ -6,82 +6,106 @@
 #' @param root_dir \code{character[1]}\cr The root directory
 #' @param file_name \code{character[1]}\cr File path (relative to the root
 #'   directory), default: \code{Dependencies}
+#' @param src_dir \code{character[1]}\cr The source directory, relative to the
+#'   root
 #' @export
-create_dep_file <- function(root_dir, file_name = "Dependencies") {
-  deps_file <- create_deps_rules(root_dir)
-  MakefileR::write_makefile(deps_file, file.path(root_dir, file_name))
+create_dep_file <- function(root_dir, file_name = "Dependencies",
+                            src_dir = ".") {
+  deps_file <- create_deps_rules(root_dir, file_path(root_dir, src_dir))
+  MakefileR::write_makefile(deps_file, file_path(root_dir, file_name))
 }
 
-create_deps_rules <- function(root_dir, relative_to = root_dir) {
-  deps <- get_deps(dir(root_dir, pattern = R_FILE_PATTERN, full.names = TRUE),
-                   relative_to = relative_to)
-  rules <- mapply(
+create_deps_rules <- function(root_dir, src_dir = root_dir) {
+  files <- dir(src_dir, pattern = R_FILE_PATTERN, full.names = TRUE)
+  web <- parse_script(files, root_dir = root_dir)
+  deps <- get_deps(web)
+
+  dep_rules <- mapply(
     function(target, dep) {
       if (!is.null(dep))
-        MakefileR::make_rule(rdx_from_r(target), rdx_from_r(names(dep)))
+        MakefileR::make_rule(rdx_from_r(web, target), rdx_from_r(web, names(dep)))
       },
     names(deps), deps
   )
 
+  process_rules <- lapply(
+    names(deps),
+    function(target) {
+      MakefileR::make_rule(rdx_from_r(web, target), target, "${script}")
+    }
+  )
+
   init <-
     MakefileR::makefile() +
-    MakefileR::make_rule("all", rdx_from_r(names(deps)))
+    MakefileR::make_group(
+      .dots = lapply(rdx_from_r(web, names(deps)), MakefileR::make_rule, targets = "all"))
 
-  purrr::reduce(purrr::compact(rules), `+`, .init = init)
+  purrr::reduce(c(purrr::compact(dep_rules), process_rules),
+                `+`, .init = init)
 }
 
-rdx_from_r <- function(path, relative_to) {
-  gsub(R_FILE_PATTERN, ".rdx", path)
+rdx_from_r <- function(web, paths) {
+  lapply(paths, rdx_from_r_one, web = web)
 }
 
-get_deps <- function(path, relative_to = ".") {
-  parsed <- parse_script(path)
-  names(parsed) <- R.utils::getRelativePath(names(parsed), relative_to)
-  lapply(parsed, get_deps_one, relative_to = relative_to)
+rdx_from_r_one <- function(web, path) {
+  path_info <- web[[path]]$path_info
+  relative_to(paste0(path_info$target_base, ".rdx"), path_info$root)
+
+  # TODO: Use root from web (not from path_info)
+}
+
+get_deps <- function(web) {
+  lapply(web, get_deps_one, relative_to = relative_to)
 }
 
 get_deps_one <- function(parsed_one, relative_to) {
   path <- dirname(parsed_one[["path"]])
-  deps <- parsed_one[["init"]][["deps"]]
-  if (is.null(deps)) {
-    return(NULL)
+  parsed_one[["init"]][["deps"]]
+}
+
+parse_script <- function(path, root_dir) {
+  names(path) <- relative_to(path, root_dir)
+  lapply(path, parse_script_one, root_dir = root_dir)
+}
+
+remove_assignments <- function(x) {
+  if (is.call(x) && identical(as.character(x[[1L]]), "<-"))
+    remove_assignments(x[[3L]])
+  else
+    x
+}
+
+find_darn_call <- function(x) {
+  if (is.call(x)) {
+    y <- x[[1L]]
+    if (is.call(y) && identical(as.character(y[[1L]]), "::") &&
+        identical(as.character(y[[2L]]), PACKAGE_NAME)) {
+      return(as.character(y[[3L]]))
+    }
   }
-  names(deps) <- R.utils::getRelativePath(file.path(path, names(deps)), relative_to)
-  deps
+
+  NA_character_
 }
 
-parse_script <- function(path) {
-  names(path) <- path
-  lapply(path, parse_script_one)
-}
+parse_script_one <- function(path, root_dir) {
+  root_dir <- normalizePath(root_dir)
+  path <- normalizePath(path)
+  path_info <- get_path_info(path, expand_makefile_env_vars)
 
-parse_script_one <- function(path) {
   exprs <- parse(path)
-  darg_calls <- vapply(
-    exprs,
-    function(x) {
-      if (is.call(x)) {
-        y <- x[[1L]]
-        if (is.call(y) && identical(as.character(y[[1L]]), "::") &&
-            identical(as.character(y[[2L]]), PACKAGE_NAME)) {
-          return(as.character(y[[3L]]))
-        }
-      }
+  exprs <- lapply(exprs, remove_assignments)
+  darn_calls <- vapply(exprs, find_darn_call, character(1L))
 
-      NA_character_
-    },
-    character(1L)
-  )
-
-  init_call_idx <- which(darg_calls == "init")
-  done_call_idx <- which(darg_calls == "done")
+  init_call_idx <- which(darn_calls == "init")
+  done_call_idx <- which(darn_calls == "done")
 
   if (length(done_call_idx) == 0L) {
     warning("No call to done() found, ", path,
-            " cannot be used as parent for other scripts.")
+            " cannot be used as parent for other scripts.", call. = FALSE)
   } else if (length(done_call_idx) > 1L) {
     warning("More than one call to done() found in ", path,
-            ", using the last.")
+            ", using the last.", call. = FALSE)
     done_call_idx <- done_call_idx[length(done_call_idx)]
   }
 
@@ -89,10 +113,14 @@ parse_script_one <- function(path) {
     exprs[init_call_idx],
     function(init_call) {
       init_call[[1]] <- quote(lazyeval::lazy_dots)
-      get_init_deps_list(eval(init_call))
+      init_args <- eval(init_call)
+      init_args <- init_args[names(init_args) %nin% names(formals(init))]
+      get_init_deps_list(init_args)
     }
   )
   deps <- unlist(deps, recursive = FALSE)
+  names(deps) <- relative_to(file.path(path_info$src_dir, names(deps)),
+                             root_dir)
 
   done <- if (length(done_call_idx) > 0L) {
     done_call <- exprs[[done_call_idx]]
@@ -101,11 +129,25 @@ parse_script_one <- function(path) {
     list(names = names(done_lazy))
   }
 
+  if (normalizePath(path_info$root) != root_dir) {
+    stop("Project root for file ", path, " different from given base directory ",
+         root_dir, call. = FALSE)
+  }
+
   list(
-    path = normalizePath(path),
+    path = path,
+    path_info = path_info,
     init = list(
       deps = deps
     ),
     done = done
   )
+}
+
+#' @importFrom stats setNames
+expand_makefile_env_vars <- function(env_vars, ...) {
+  if (length(env_vars) == 0L) {
+    return()
+  }
+  setNames(paste0("${", env_vars, "}"), env_vars)
 }

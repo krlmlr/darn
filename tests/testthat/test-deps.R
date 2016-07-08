@@ -2,7 +2,7 @@ context("deps")
 
 test_that("parsing", {
   withr::with_dir("simple", {
-    expect_warning(parsed <- parse_script(dir()), NA)
+    expect_warning(parsed <- parse_script(dir(pattern = "[.][rR]$"), "."), NA)
 
     A <- parsed[["A.R"]]
     expect_identical(A$path, normalizePath("A.R"))
@@ -26,36 +26,40 @@ test_that("parsing", {
 
 test_that("deps", {
   withr::with_dir("simple", {
+    web <- parse_script(dir(pattern = "[.][rR]$"), ".")
     expect_identical(
-      get_deps(dir()),
+      get_deps(web),
       list("A.R" = NULL, "B.R" = list("A.R" = NULL))
     )
   })
 })
 
 test_that("deps in subdir", {
+  web <- parse_script(
+    dir("subdir", pattern = "[.][rR]$", full.names = TRUE, recursive = TRUE),
+    "subdir")
+
   expect_identical(
-    get_deps(dir("simple", full.names = TRUE)),
-    list("simple/A.R" = NULL, "simple/B.R" = list("simple/A.R" = NULL))
+    get_deps(web),
+    list("dir/A.R" = NULL, "dir/B.R" = list("dir/A.R" = NULL))
   )
 })
 
-test_that("dep rules", {
-  rules <- create_deps_rules("simple")
-  expect_true(any(grepl("all: A[.]rdx B[.]rdx", format(rules))))
-  expect_true(any(grepl("B[.]rdx: A[.]rdx", format(rules))))
-})
-
 test_that("dep rules in subdir", {
-  rules <- create_deps_rules("simple", ".")
-  expect_true(any(grepl("all: simple/A[.]rdx simple/B[.]rdx", format(rules))))
-  expect_true(any(grepl("simple/B[.]rdx: simple/A[.]rdx", format(rules))))
+  rules <- create_deps_rules("subdir", "subdir/dir")
+  expect_true(
+    "all: dir/A.rdx" %in% format(rules))
+  expect_true(
+    "all: dir/B.rdx" %in% format(rules))
+  expect_true(
+    "dir/B.rdx: dir/A.rdx" %in% format(rules))
 })
 
 test_that("dep file, by default into file named Dependencies", {
   f <- setup_scenario("simple")
   create_dep_file(f())
   dep_contents <- readLines(f("Dependencies"))
-  expect_true(any(grepl("all: A[.]rdx B[.]rdx", dep_contents)))
-  expect_true(any(grepl("B[.]rdx: A[.]rdx", dep_contents)))
+  expect_true("all: A.rdx" %in% dep_contents)
+  expect_true("all: B.rdx" %in% dep_contents)
+  expect_true("B.rdx: A.rdx" %in% dep_contents)
 })

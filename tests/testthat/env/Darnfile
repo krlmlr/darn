@@ -1,0 +1,5 @@
+env_vars=FORTYTWO TWENTYONE
+out_dir=out
+src_dir=src
+FORTYTWO?=42
+TWENTYONE?=21

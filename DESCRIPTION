@@ -1,32 +1,17 @@
-Package: darg
-Title: Directed Acyclic R Script Graphs
-Version: 0.0-3
-Date: 2016-01-08
-Authors@R: as.person("Kirill Müller <krlmlr+r@mailbox.org> [aut, cre]")
-Description: Data pipelines made of R scripts
+Package: darn
+Title: Directed Acyclic R Script Networks
+Version: 0.3
+Date: 2016-07-07
+Authors@R: c( person("Kirill", "Müller", role = c("aut", "cre"), email
+        = "krlmlr+r@mailbox.org"), person(family = "R Core team", role
+        = "ctb", comment = "Code for lazy-load databases extracted from
+        tools package") )
+Description: Data pipelines made of R scripts.
+Imports: MakefileR (>= 1.0-2), lazyeval, lazyforward, rprojroot (>=
+        0.1-1), memoise, kimisc, R.utils, purrr, tibble
+Suggests: graph, testthat, withr, devtools, rmarkdown, future
 License: GPL-3
 LazyData: true
 Encoding: UTF-8
-GitHub: https://github.com/krlmlr/darg
-Imports:
-    lazyeval,
-    lazyforward,
-    rprojroot,
-    kimisc,
-    R.utils,
-    MakefileR,
-    purrr
-Suggests:
-    testthat,
-    withr,
-    devtools,
-    rmarkdown
-RoxygenNote: 5.0.1.9000
-Collate:
-    'config.R'
-    'deps.R'
-    'make.R'
-    'process.R'
-    'root.R'
-    'utils.R'
-    'zzz-autoroxy.R'
+GitHub: https://github.com/krlmlr/darn
+RoxygenNote: 5.0.1
