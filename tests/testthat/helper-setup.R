@@ -11,7 +11,7 @@ temp_lib <- future::multisession({
 })
 
 # Force future, important for parallel testing
-if (identical(Sys.getenv("NOT_CRAN"), "true")) {
+if (!interactive() && identical(Sys.getenv("NOT_CRAN"), "true")) {
   message("Waiting for installation of package library... ", appendLF = FALSE)
   future::value(temp_lib)
   message("done")
