@@ -31,3 +31,18 @@ get_order <- function(root_dir) {
 
   names(igraph::topo_sort(ig))
 }
+
+#' Creates a script that will run all scripts in the network
+#'
+#' The scripts will be run in an order that guarantees that all dependencies
+#' are available when needed.
+#'
+#' @inheritParams create_dep_file
+#' @param filename \code{[character(1)]}\cr
+#'   The file name of the script to be created
+#'
+#' @export
+create_script <- function(root_dir, filename = "darn.R") {
+  order <- get_order(root_dir)
+  writeLines(run_call(order), filename)
+}

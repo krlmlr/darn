@@ -2,6 +2,7 @@
 
 export(create_dep_file)
 export(create_makefile)
+export(create_script)
 export(dep_graph)
 export(done)
 export(done_)
