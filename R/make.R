@@ -22,7 +22,7 @@
 create_makefile <- function(
   root_dir, file_name = "Makefile", dep_file_name = "Dependencies",
   src_dir = ".", out_dir = ".", env_vars = NULL,
-  script = "R -e \"darn::run(file = '$<', ezknitr::ezspin, wd = '.', out_dir = '$(dir $@)', verbose = TRUE, keep_rmd = TRUE, chunk_opts = list(tidy = FALSE, error = FALSE))\"") {
+  script = paste0("R -e \"", run_call("$<"), "\"")) {
 
   out_dir <- relative_to(file_path(root_dir, out_dir), root_dir)
 
@@ -95,4 +95,8 @@ create_config_group <- function(dep_file_name, src_dir, out_dir, env_vars,
   }
 
   ret
+}
+
+run_call <- function(filename) {
+  paste0("darn::run(file = '", filename, "', ezknitr::ezspin, wd = '.', out_dir = '$(dir $@)', verbose = TRUE, keep_rmd = TRUE, chunk_opts = list(tidy = FALSE, error = FALSE))")
 }
