@@ -66,7 +66,9 @@ get_deps_one <- function(parsed_one, relative_to) {
 
 parse_script <- function(path, root_dir) {
   names(path) <- relative_to(path, root_dir)
-  lapply(path, parse_script_one, root_dir = root_dir)
+  parsed <- lapply(path, parse_script_one, root_dir = root_dir)
+  parsed <- parsed[!vapply(parsed, is.null, logical(1L))]
+  parsed
 }
 
 remove_assignments <- function(x) {
@@ -101,8 +103,7 @@ parse_script_one <- function(path, root_dir) {
   done_call_idx <- which(darn_calls == "done")
 
   if (length(done_call_idx) == 0L) {
-    warning("No call to done() found, ", path,
-            " cannot be used as parent for other scripts.", call. = FALSE)
+    return(NULL)
   } else if (length(done_call_idx) > 1L) {
     warning("More than one call to done() found in ", path,
             ", using the last.", call. = FALSE)
