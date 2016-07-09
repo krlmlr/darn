@@ -16,4 +16,5 @@ test_that("Can get order of graph", {
   expect_identical(get_order("simple"), c("A.R", "B.R"))
   expect_identical(get_order("out_dir"), c("A.R", "B.R"))
   expect_identical(get_order("subdir"), c("dir/A.R", "dir/B.R"))
+  expect_error(get_order("loop"), "cycle")
 })

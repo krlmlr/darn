@@ -25,5 +25,9 @@ get_order <- function(root_dir) {
   g <- dep_graph(root_dir)
   ig <- igraph::graph_from_graphnel(g)
 
+  if (!igraph::is_dag(ig)) {
+    stop("Dependency cycle detected", call. = FALSE)
+  }
+
   names(igraph::topo_sort(ig))
 }
