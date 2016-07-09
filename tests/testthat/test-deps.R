@@ -34,6 +34,20 @@ test_that("deps", {
   })
 })
 
+
+test_that("scripts without done() are not listed in dependencies", {
+  f <- setup_scenario("simple")
+  withr::with_dir(f(), {
+    web1 <- parse_script(dir(pattern = "[.][rR]$"), ".")
+    writeLines("# empty script", f("C.R"))
+    web2 <- parse_script(dir(pattern = "[.][rR]$"), ".")
+    expect_identical(
+      get_deps(web1),
+      get_deps(web2)
+    )
+  })
+})
+
 test_that("deps in subdir", {
   web <- parse_script(
     dir("subdir", pattern = "[.][rR]$", full.names = TRUE, recursive = TRUE),

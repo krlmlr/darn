@@ -46,7 +46,7 @@ test_scenario <- function(scenario_name, src_dir, out_dir, unlink_darnfile, make
   )
   expect_true(file.exists(f(target_dir, "C.rdx")))
 
-  unlink(f("B.R"))
+  unlink(f(src_dir, "B.R"))
   unlink(f(target_dir, c("B.rdb", "B.rdx")))
   withr::with_envvar(
     c(R_LIBS=paste(.libPaths(), collapse = ":")),
