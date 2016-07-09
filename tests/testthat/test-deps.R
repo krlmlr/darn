@@ -34,6 +34,20 @@ test_that("deps", {
   })
 })
 
+
+test_that("scripts without done() are not listed in dependencies", {
+  f <- setup_scenario("simple")
+  withr::with_dir(f(), {
+    web1 <- parse_script(dir(pattern = "[.][rR]$"), ".")
+    writeLines("# empty script", f("C.R"))
+    web2 <- parse_script(dir(pattern = "[.][rR]$"), ".")
+    expect_identical(
+      get_deps(web1),
+      get_deps(web2)
+    )
+  })
+})
+
 test_that("deps in subdir", {
   web <- parse_script(
     dir("subdir", pattern = "[.][rR]$", full.names = TRUE, recursive = TRUE),
@@ -48,7 +62,9 @@ test_that("deps in subdir", {
 test_that("dep rules in subdir", {
   rules <- create_deps_rules("subdir", "subdir/dir")
   expect_true(
-    "all: dir/A.rdx dir/B.rdx" %in% format(rules))
+    "all: dir/A.rdx" %in% format(rules))
+  expect_true(
+    "all: dir/B.rdx" %in% format(rules))
   expect_true(
     "dir/B.rdx: dir/A.rdx" %in% format(rules))
 })
@@ -57,6 +73,7 @@ test_that("dep file, by default into file named Dependencies", {
   f <- setup_scenario("simple")
   create_dep_file(f())
   dep_contents <- readLines(f("Dependencies"))
-  expect_true("all: A.rdx B.rdx" %in% dep_contents)
+  expect_true("all: A.rdx" %in% dep_contents)
+  expect_true("all: B.rdx" %in% dep_contents)
   expect_true("B.rdx: A.rdx" %in% dep_contents)
 })

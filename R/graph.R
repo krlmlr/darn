@@ -18,3 +18,31 @@ dep_graph <- function(root_dir) {
   g <- graph::graphNEL(V, EL, edgemode = "directed")
   graph::reverseEdgeDirections(g)
 }
+
+get_order <- function(root_dir) {
+  require_suggested("igraph")
+
+  g <- dep_graph(root_dir)
+  ig <- igraph::graph_from_graphnel(g)
+
+  if (!igraph::is_dag(ig)) {
+    stop("Dependency cycle detected", call. = FALSE)
+  }
+
+  names(igraph::topo_sort(ig))
+}
+
+#' Creates a script that will run all scripts in the network
+#'
+#' The scripts will be run in an order that guarantees that all dependencies
+#' are available when needed.
+#'
+#' @inheritParams create_dep_file
+#' @param filename \code{[character(1)]}\cr
+#'   The file name of the script to be created
+#'
+#' @export
+create_script <- function(root_dir, filename = "darn.R") {
+  order <- get_order(root_dir)
+  writeLines(run_call(order), filename)
+}
