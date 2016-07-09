@@ -1,3 +1,14 @@
+# darn 0.3-1 (2016-07-09)
+
+- Scripts without `done()` are not part of the dependencies anymore.
+- New `create_script()` that creates a script that can be sourced and executes all scripts in an appropriate order (#31).
+- Script errors now lead to termination of the `make` process (#27).
+- Clash for environment variables is reported only if the values differ (#26).
+- Warn if search path is modified when running `init()`.
+- Package installation in temporary library is done in helper.
+- Avoid overly long lines in `Dependencies` file (#29).
+
+
 # darn 0.3 (2016-07-07)
 
 Bug fixes
