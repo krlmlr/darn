@@ -134,3 +134,18 @@ test_that("can run script with custom env vars twice in same environment", {
     expect_error(local(source(f("src/B.R")), envir = target_env), "Value clash.*FORTYTWO")
   )
 })
+
+test_that("running bad script gives error", {
+  f <- setup_scenario("error")
+
+  create_makefile(f())
+
+  expect_error(source(f("B.R"), local = TRUE))
+  expect_error(source(f("A.R"), local = TRUE))
+
+  patch_oops(f("A.R"))
+
+  expect_error(source(f("B.R"), local = TRUE), NA)
+  expect_true(file.exists(f("A.rdb")))
+  expect_true(file.exists(f("A.rdx")))
+})
