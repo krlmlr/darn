@@ -22,7 +22,7 @@
 create_makefile <- function(
   root_dir, file_name = "Makefile", dep_file_name = "Dependencies",
   src_dir = ".", out_dir = ".", env_vars = NULL,
-  script = "Rscript -e \"darn::run(file = '$<', ezknitr::ezspin, wd = '.', out_dir = '$(dir $@)', verbose = TRUE, keep_rmd = TRUE, chunk_opts = list(tidy = FALSE, error = FALSE))\"") {
+  script = "R -e \"darn::run(file = '$<', ezknitr::ezspin, wd = '.', out_dir = '$(dir $@)', verbose = TRUE, keep_rmd = TRUE, chunk_opts = list(tidy = FALSE, error = FALSE))\"") {
 
   out_dir <- relative_to(file_path(root_dir, out_dir), root_dir)
 
