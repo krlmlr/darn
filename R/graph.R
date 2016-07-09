@@ -18,3 +18,12 @@ dep_graph <- function(root_dir) {
   g <- graph::graphNEL(V, EL, edgemode = "directed")
   graph::reverseEdgeDirections(g)
 }
+
+get_order <- function(root_dir) {
+  require_suggested("igraph")
+
+  g <- dep_graph(root_dir)
+  ig <- igraph::graph_from_graphnel(g)
+
+  names(igraph::topo_sort(ig))
+}
