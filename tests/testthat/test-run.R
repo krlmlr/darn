@@ -27,7 +27,7 @@ test_that("can run single script with different output directory", {
 test_that("can run script with dependency", {
   f <- setup_scenario("simple")
 
-  expect_error(source(f("B.R"), local = TRUE), NA)
+  source(f("B.R"), local = TRUE)
   expect_true(file.exists(f("A.rdb")))
   expect_true(file.exists(f("A.rdx")))
   expect_true(file.exists(f("B.rdb")))
@@ -112,4 +112,25 @@ test_that("can run script with custom env vars", {
   env <- new.env()
   lazyLoad(f("out/FORTYTWO-43/TWENTYONE-22/src/B"), envir = env)
   expect_identical(as.list(env), list(twentyone = 22L))
+})
+
+test_that("can run script with custom env vars twice in same environment", {
+  f <- setup_scenario("env")
+
+  target_env <- new.env()
+
+  withr::with_envvar(
+    c(FORTYTWO = "43", TWENTYONE = "22"),
+    expect_error(local(source(f("src/B.R")), envir = target_env), NA)
+  )
+
+  withr::with_envvar(
+    c(FORTYTWO = "43", TWENTYONE = "22"),
+    expect_error(local(source(f("src/B.R")), envir = target_env), NA)
+  )
+
+  withr::with_envvar(
+    c(FORTYTWO = "44", TWENTYONE = "22"),
+    expect_error(local(source(f("src/B.R")), envir = target_env), "Value clash.*FORTYTWO")
+  )
 })
