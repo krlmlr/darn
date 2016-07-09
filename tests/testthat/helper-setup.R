@@ -2,7 +2,7 @@ TEST_MAKE_VERBOSE <- TRUE
 
 TEST_MAKE_VERBOSE <- FALSE
 
-temp_lib <- future::multicore({
+temp_lib <- future::multisession({
   lib_path <- withr::with_temp_libpaths({
     devtools::install(dependencies = FALSE, upgrade_dependencies = FALSE, quiet = TRUE, quick = TRUE, reload = FALSE)
     .libPaths()[[1L]]
@@ -11,7 +11,7 @@ temp_lib <- future::multicore({
 })
 
 # Force future, important for parallel testing
-if (identical(Sys.getenv("NOT_CRAN"), "true")) {
+if (!interactive() && identical(Sys.getenv("NOT_CRAN"), "true")) {
   message("Waiting for installation of package library... ", appendLF = FALSE)
   future::value(temp_lib)
   message("done")

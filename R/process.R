@@ -45,10 +45,18 @@ check_env_vals <- function(env_vars, path_info) {
 }
 
 assign_env_vals <- function(env_vals, envir) {
-  defined_env_vars <- intersect(names(env_vals), ls(envir))
+  if (length(env_vals) == 0L)
+    return()
+
+  defined_env_vars <- mget(names(env_vals), envir, ifnotfound = list(NULL))
+  defined_env_vars <- defined_env_vars[!vapply(defined_env_vars, is.null, logical(1L))]
+
   if (length(defined_env_vars) > 0L) {
-    stop("Name clash for environment variables: ",
-         paste0(defined_env_vars, collapse = ", "), call. = FALSE)
+    if (!isTRUE(all.equal(env_vals[names(defined_env_vars)], defined_env_vars))) {
+      stop("Value clash for environment variables: ",
+           paste0(names(defined_env_vars), " = ", unlist(defined_env_vars), collapse = ", "),
+           call. = FALSE)
+    }
   }
 
   mapply(assign, names(env_vals), env_vals, MoreArgs = list(envir = envir))
