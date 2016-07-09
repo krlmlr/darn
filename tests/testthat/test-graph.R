@@ -8,6 +8,6 @@ test_that("Can create simple graph", {
 
 test_that("Can create simple graph for subdir", {
   g <- dep_graph("subdir")
-  expect_identical(graph::nodes(g), c("A.R", "B.R"))
-  expect_identical(graph::edges(g), list(A.R = "B.R", B.R = character()))
+  expect_identical(graph::nodes(g), c("dir/A.R", "dir/B.R"))
+  expect_identical(graph::edges(g), list(`dir/A.R` = "dir/B.R", `dir/B.R` = character()))
 })
