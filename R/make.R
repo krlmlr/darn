@@ -15,14 +15,22 @@
 #' @param env_vars \code{[named list]}\cr
 #'   Default values for environment variables that define configurations of the
 #'   script, default: none
-#' @param script \code{[character]}\cr Script that processes the input files,
-#'   default: a call to \code{run} (recommmended) that invokes
-#'   \code{ezknitr::\link[ezknitr]{ezspin}}
+#' @param script \code{[character]}\cr A script that processes the input files,
+#'   suitable for inclusion in a \code{Makefile}.  Use \code{$<} as placeholder
+#'   for the current input file.
+#'   Default: a call to \code{run} (recommmended) that invokes
+#'   \code{ezknitr::\link[ezknitr]{ezspin}}.
 #' @export
 create_makefile <- function(
   root_dir, file_name = "Makefile", dep_file_name = "Dependencies",
   src_dir = ".", out_dir = ".", env_vars = NULL,
-  script = paste0("R -e \"", run_call("$<"), "\"")) {
+  script = NULL) {
+
+  my_formals <- formals()
+  my_formals$script <- paste0("R -e \"", run_call("$<"), "\"")
+
+  if (is.null(script))
+    script <- my_formals$script
 
   out_dir <- relative_to(file_path(root_dir, out_dir), root_dir)
 
@@ -37,8 +45,6 @@ create_makefile <- function(
   } else {
     warning("Not overwriting config file ", config_path, call. = FALSE)
   }
-
-  my_formals <- formals()
 
   make_file <-
     MakefileR::makefile() +
