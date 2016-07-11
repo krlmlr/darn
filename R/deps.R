@@ -16,18 +16,50 @@ create_dep_file <- function(root_dir, file_name = "Dependencies",
 }
 
 create_deps_rules <- function(root_dir, src_dir = root_dir) {
-  files <- dir(src_dir, pattern = R_FILE_PATTERN, full.names = TRUE)
-  web <- parse_script(files, root_dir = root_dir)
+  web <- get_web_from_src(root_dir, src_dir)
   deps <- get_deps(web)
 
-  dep_rules <- mapply(
-    function(target, dep) {
-      if (!is.null(dep))
-        MakefileR::make_rule(rdx_from_r(web, target), rdx_from_r(web, names(dep)))
-      },
-    names(deps), deps
-  )
+  init <-
+    MakefileR::makefile() +
+    MakefileR::make_group(
+      .dots = lapply(simple_from_r(web, names(deps)), MakefileR::make_rule, targets = "all"))
 
+  simple_rules <- list(MakefileR::make_group(
+    MakefileR::make_comment("Simple rules for building individual targets"),
+    .dots = lapply(
+      names(deps),
+      function(target) {
+        MakefileR::make_rule(simple_from_r(web, target), rdx_from_r(web, target))
+      }
+    )
+  ))
+
+  dep_rules_simple <- list(MakefileR::make_group(
+    MakefileR::make_comment("Dependencies on simple targets are there for the user's convenience only"),
+    .dots = purrr::compact(mapply(
+      function(target, dep) {
+        if (!is.null(dep))
+          MakefileR::make_rule(simple_from_r(web, target), simple_from_r(web, names(dep)))
+      },
+      names(deps), deps
+    ))
+  ))
+
+  dep_rules_rdx <- list(MakefileR::make_group(
+    MakefileR::make_comment("Dependencies are formulated on .rdx files for safety"),
+    .dots = purrr::compact(mapply(
+      function(target, dep) {
+        if (!is.null(dep))
+          MakefileR::make_rule(rdx_from_r(web, target), rdx_from_r(web, names(dep)))
+        },
+      names(deps), deps
+    ))
+  ))
+
+  process_rules_comment <-
+    list(MakefileR::make_comment("The actual worker rules"))
+
+  # Not using a pattern rule here by design (#4)
   process_rules <- lapply(
     names(deps),
     function(target) {
@@ -35,13 +67,17 @@ create_deps_rules <- function(root_dir, src_dir = root_dir) {
     }
   )
 
-  init <-
-    MakefileR::makefile() +
-    MakefileR::make_group(
-      .dots = lapply(rdx_from_r(web, names(deps)), MakefileR::make_rule, targets = "all"))
-
-  purrr::reduce(c(purrr::compact(dep_rules), process_rules),
+  purrr::reduce(c(simple_rules, dep_rules_simple, dep_rules_rdx, process_rules_comment, process_rules),
                 `+`, .init = init)
+}
+
+simple_from_r <- function(web, paths) {
+  lapply(paths, simple_from_r_one, web = web)
+}
+
+simple_from_r_one <- function(web, path) {
+  path_info <- web[[path]]$path_info
+  basename(path_info$target_base)
 }
 
 rdx_from_r <- function(web, paths) {
@@ -62,6 +98,14 @@ get_deps <- function(web) {
 get_deps_one <- function(parsed_one, relative_to) {
   path <- dirname(parsed_one[["path"]])
   parsed_one[["init"]][["deps"]]
+}
+
+get_web_from_src <- function(root_dir, src_dir) {
+  withr::with_locale(
+    c(LC_COLLATE = "C"),
+    files <- dir(src_dir, pattern = R_FILE_PATTERN, full.names = TRUE)
+  )
+  parse_script(files, root_dir = root_dir)
 }
 
 parse_script <- function(path, root_dir) {
