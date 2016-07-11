@@ -37,7 +37,7 @@ create_deps_rules <- function(root_dir, src_dir = root_dir) {
     .dots = purrr::compact(mapply(
       function(target, dep) {
         if (!is.null(dep))
-          MakefileR::make_rule(simple_from_r(web, target), simple_from_r(web, names(dep)))
+          MakefileR::make_rule(rdx_from_r(web, target), simple_from_r(web, names(dep)))
         },
       names(deps), deps
     ))
