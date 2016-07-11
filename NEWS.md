@@ -1,3 +1,9 @@
+# darn 0.3-2 (2016-07-12)
+
+- Add simple targets (without path or extension) to `Dependencies` (#33).
+- Sorting of file names is now always done in the `"C"` locale for stability (#32).
+
+
 # darn 0.3-1 (2016-07-09)
 
 - Scripts without `done()` are not part of the dependencies anymore.
