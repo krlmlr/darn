@@ -66,7 +66,9 @@ test_that("dep rules in subdir", {
   expect_true(
     "all: B" %in% format(rules))
   expect_true(
-    "dir/B.rdx: A" %in% format(rules))
+    "B: A" %in% format(rules))
+  expect_true(
+    "dir/B.rdx: dir/A.rdx" %in% format(rules))
 })
 
 test_that("dep file, by default into file named Dependencies", {
@@ -75,5 +77,6 @@ test_that("dep file, by default into file named Dependencies", {
   dep_contents <- readLines(f("Dependencies"))
   expect_true("all: A" %in% dep_contents)
   expect_true("all: B" %in% dep_contents)
-  expect_true("B.rdx: A" %in% dep_contents)
+  expect_true("B: A" %in% dep_contents)
+  expect_true("B.rdx: A.rdx" %in% dep_contents)
 })

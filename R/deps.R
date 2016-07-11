@@ -25,6 +25,7 @@ create_deps_rules <- function(root_dir, src_dir = root_dir) {
       .dots = lapply(simple_from_r(web, names(deps)), MakefileR::make_rule, targets = "all"))
 
   simple_rules <- list(MakefileR::make_group(
+    MakefileR::make_comment("Simple rules for building individual targets"),
     .dots = lapply(
       names(deps),
       function(target) {
@@ -33,7 +34,19 @@ create_deps_rules <- function(root_dir, src_dir = root_dir) {
     )
   ))
 
-  dep_rules <- list(MakefileR::make_group(
+  dep_rules_simple <- list(MakefileR::make_group(
+    MakefileR::make_comment("Dependencies on simple targets are there for the user's convenience only"),
+    .dots = purrr::compact(mapply(
+      function(target, dep) {
+        if (!is.null(dep))
+          MakefileR::make_rule(simple_from_r(web, target), simple_from_r(web, names(dep)))
+      },
+      names(deps), deps
+    ))
+  ))
+
+  dep_rules_rdx <- list(MakefileR::make_group(
+    MakefileR::make_comment("Dependencies are formulated on .rdx files for safety"),
     .dots = purrr::compact(mapply(
       function(target, dep) {
         if (!is.null(dep))
@@ -43,6 +56,10 @@ create_deps_rules <- function(root_dir, src_dir = root_dir) {
     ))
   ))
 
+  process_rules_comment <-
+    list(MakefileR::make_comment("The actual worker rules"))
+
+  # Not using a pattern rule here by design (#4)
   process_rules <- lapply(
     names(deps),
     function(target) {
@@ -50,7 +67,7 @@ create_deps_rules <- function(root_dir, src_dir = root_dir) {
     }
   )
 
-  purrr::reduce(c(simple_rules, purrr::compact(dep_rules), process_rules),
+  purrr::reduce(c(simple_rules, dep_rules_simple, dep_rules_rdx, process_rules_comment, process_rules),
                 `+`, .init = init)
 }
 
