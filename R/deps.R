@@ -19,13 +19,29 @@ create_deps_rules <- function(root_dir, src_dir = root_dir) {
   web <- get_web_from_src(root_dir, src_dir)
   deps <- get_deps(web)
 
-  dep_rules <- mapply(
-    function(target, dep) {
-      if (!is.null(dep))
-        MakefileR::make_rule(rdx_from_r(web, target), rdx_from_r(web, names(dep)))
-      },
-    names(deps), deps
-  )
+  init <-
+    MakefileR::makefile() +
+    MakefileR::make_group(
+      .dots = lapply(simple_from_r(web, names(deps)), MakefileR::make_rule, targets = "all"))
+
+  simple_rules <- list(MakefileR::make_group(
+    .dots = lapply(
+      names(deps),
+      function(target) {
+        MakefileR::make_rule(simple_from_r(web, target), rdx_from_r(web, target))
+      }
+    )
+  ))
+
+  dep_rules <- list(MakefileR::make_group(
+    .dots = purrr::compact(mapply(
+      function(target, dep) {
+        if (!is.null(dep))
+          MakefileR::make_rule(simple_from_r(web, target), simple_from_r(web, names(dep)))
+        },
+      names(deps), deps
+    ))
+  ))
 
   process_rules <- lapply(
     names(deps),
@@ -34,13 +50,17 @@ create_deps_rules <- function(root_dir, src_dir = root_dir) {
     }
   )
 
-  init <-
-    MakefileR::makefile() +
-    MakefileR::make_group(
-      .dots = lapply(rdx_from_r(web, names(deps)), MakefileR::make_rule, targets = "all"))
-
-  purrr::reduce(c(purrr::compact(dep_rules), process_rules),
+  purrr::reduce(c(simple_rules, purrr::compact(dep_rules), process_rules),
                 `+`, .init = init)
+}
+
+simple_from_r <- function(web, paths) {
+  lapply(paths, simple_from_r_one, web = web)
+}
+
+simple_from_r_one <- function(web, path) {
+  path_info <- web[[path]]$path_info
+  basename(path_info$target_base)
 }
 
 rdx_from_r <- function(web, paths) {
