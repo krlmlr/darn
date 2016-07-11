@@ -64,7 +64,10 @@ get_deps_one <- function(parsed_one, relative_to) {
 }
 
 get_web_from_src <- function(root_dir, src_dir) {
-  files <- dir(src_dir, pattern = R_FILE_PATTERN, full.names = TRUE)
+  withr::with_locale(
+    c(LC_COLLATE = "C"),
+    files <- dir(src_dir, pattern = R_FILE_PATTERN, full.names = TRUE)
+  )
   parse_script(files, root_dir = root_dir)
 }
 
