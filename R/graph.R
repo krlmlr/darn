@@ -8,9 +8,9 @@ dep_graph <- function(root_dir) {
   require_suggested("graph")
 
   config <- read_config(root_dir)
-  web <- parse_script(dir(file_path(root_dir, config[["src_dir"]]),
-                          pattern = R_FILE_PATTERN, full.names = TRUE),
-                      root_dir = root_dir)
+  src_dir <- file_path(root_dir, config[["src_dir"]])
+  web <- get_web_from_src(root_dir, src_dir)
+
   deps <- get_deps(web)
   V <- names(deps)
   E <- lapply(deps, names)
