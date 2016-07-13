@@ -165,3 +165,10 @@ get_target_dir <- function() {
   path_info <- get_path_info()
   path_info$target_dir
 }
+
+#' @inheritParams base::file.path
+#' @export
+#' @rdname get_target_dir
+get_target_path <- function(...) {
+  file.path(get_target_dir(), ...)
+}
