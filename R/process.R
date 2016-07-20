@@ -4,7 +4,8 @@
 #' using double-colon notation (\code{darn::init()}).  A script without such a
 #' call is considered to have no prerequisites.
 #'
-#' @param ... Dependencies
+#' @param ... [character(1)]\cr
+#'   Prerequisites, without path or extension
 #' @name init
 #' @inheritParams init_
 NULL
