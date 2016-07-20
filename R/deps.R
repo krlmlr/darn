@@ -36,7 +36,7 @@ create_deps_rules <- function(root_dir, src_dir = root_dir) {
   ))
 
   dep_rules_simple <- list(MakefileR::make_group(
-    MakefileR::make_comment("Dependencies on simple targets are there for the user's convenience only"),
+    MakefileR::make_comment("Prerequisites for simple targets are there for the user's convenience only"),
     .dots = purrr::compact(mapply(
       function(target, dep) {
         if (!is.null(dep))
