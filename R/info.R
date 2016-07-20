@@ -47,6 +47,7 @@ get_env_vars <- function(config) {
   env_vars
 }
 
+#' @importFrom utils type.convert
 get_env_vals <- function(env_vars, config) {
   if (length(env_vars) == 0L) {
     return()

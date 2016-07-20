@@ -34,7 +34,7 @@ get_order <- function(root_dir) {
 
 #' Creates a script that will run all scripts in the network
 #'
-#' The scripts will be run in an order that guarantees that all dependencies
+#' The scripts will be run in an order that guarantees that all prerequisites
 #' are available when needed.
 #'
 #' @inheritParams create_dep_file

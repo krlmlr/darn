@@ -1,25 +1,5 @@
-#' Init a stage
-#'
-#' Add a call to this functions as first statement to each of your scripts,
-#' using double-colon notation (\code{darn::init()}).  A script without such a
-#' call is considered to have no dependencies.
-#'
-#' @param ... Dependencies
-#' @name init
-#' @inheritParams init_
-NULL
+# init --------------------------------------------------------------------
 
-#' @export
-#' @param .dots \code{[list]}\cr
-#'   Additional dependencies as list
-#' @param env_vars \code{[character]}\cr
-#'   Environment variables that define the configuration of the script
-#' @param envir \code{[environment]}\cr
-#'   Environment to load the data into. Default: parent frame.
-#' @param path \code{[character(1)]}\cr
-#'   The path of the current script, useful if automatic detection fails.
-#' @return A named list that contains path information about the current script.
-#' @rdname init
 init_ <- function(..., .dots = NULL, env_vars = NULL,
                   envir = parent.frame(), path = NULL) {
   path_info <- get_path_info(path)
@@ -112,29 +92,28 @@ init_one <- function(r_file_name, deps, path_info, envir) {
   lazyLoad(rdx_base, envir = envir)
 }
 
+#' Init a stage
+#'
+#' Add a call to this functions as first statement to each of your scripts,
+#' using double-colon notation (\code{darn::init()}).  A script without such a
+#' call is considered to have no prerequisites.
+#'
+#' @param ... [character(1)]\cr
+#'   Prerequisites, without path or extension
+#' @param env_vars \code{[character]}\cr
+#'   Environment variables that define the configuration of the script
+#' @param envir \code{[environment]}\cr
+#'   Environment to load the data into. Default: parent frame.
+#' @param path \code{[character(1)]}\cr
+#'   The path of the current script, useful if automatic detection fails.
+#' @return A named list that contains path information about the current script.
 #' @export
-#' @inheritParams init_
 #' @importFrom lazyforward lazyforward
 init <- lazyforward("init_")
 
-#' Write the results of a stage
-#'
-#' Add a call to this functions as last statement to each of your scripts,
-#' using double-colon notation (\code{darn::done()}).  A script without such a
-#' call is considered to have no output and cannot be a dependency of another
-#' script.
-#'
-#' @param ... Objects to save
-#' @name done
-NULL
 
-#' @export
-#' @param .dots \code{list}\cr
-#'   Additional objects as list
-#' @param .compress \code{logical(1)}\cr
-#'   Compress output (default: \code{FALSE})
-#' @return A named list that contains path information about the current script.
-#' @rdname done
+# done --------------------------------------------------------------------
+
 done_ <- function(..., .dots = NULL, .compress = FALSE) {
   path_info <- get_path_info()
 
@@ -150,10 +129,24 @@ get_done_dots <- function(.dots, ...) {
   lazyeval::all_dots(.dots, ..., all_named = TRUE)
 }
 
+#' Write the results of a stage
+#'
+#' Add a call to this functions as last statement to each of your scripts,
+#' using double-colon notation (\code{darn::done()}).  A script without such a
+#' call is considered to have no output and cannot be a prerequisite of another
+#' script.
+#'
+#' @param ... \code{[any]}\cr
+#'   Objects to save
+#' @param .compress \code{logical(1)}\cr
+#'   Compress output (default: \code{FALSE})
+#' @return A named list that contains path information about the current script.
 #' @export
-#' @inheritParams done_
 #' @importFrom lazyforward lazyforward
 done <- lazyforward("done_")
+
+
+# get_target_dir and get_target_path --------------------------------------
 
 #' Returns target directory
 #'
@@ -164,4 +157,11 @@ done <- lazyforward("done_")
 get_target_dir <- function() {
   path_info <- get_path_info()
   path_info$target_dir
+}
+
+#' @inheritParams base::file.path
+#' @export
+#' @rdname get_target_dir
+get_target_path <- function(...) {
+  file.path(get_target_dir(), ...)
 }

@@ -2,17 +2,13 @@
 % Please edit documentation in R/process.R
 \name{init}
 \alias{init}
-\alias{init_}
 \title{Init a stage}
 \usage{
-init_(..., .dots = NULL, env_vars = NULL, envir = parent.frame(),
-  path = NULL)
+init(..., env_vars = NULL, envir = parent.frame(), path = NULL)
 }
 \arguments{
-\item{...}{Dependencies}
-
-\item{.dots}{\code{[list]}\cr
-Additional dependencies as list}
+\item{...}{[character(1)]\cr
+Prerequisites, without path or extension}
 
 \item{env_vars}{\code{[character]}\cr
 Environment variables that define the configuration of the script}
@@ -29,6 +25,6 @@ A named list that contains path information about the current script.
 \description{
 Add a call to this functions as first statement to each of your scripts,
 using double-colon notation (\code{darn::init()}).  A script without such a
-call is considered to have no dependencies.
+call is considered to have no prerequisites.
 }
 

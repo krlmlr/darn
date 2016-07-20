@@ -2,16 +2,13 @@
 % Please edit documentation in R/process.R
 \name{done}
 \alias{done}
-\alias{done_}
 \title{Write the results of a stage}
 \usage{
-done_(..., .dots = NULL, .compress = FALSE)
+done(..., .compress = FALSE)
 }
 \arguments{
-\item{...}{Objects to save}
-
-\item{.dots}{\code{list}\cr
-Additional objects as list}
+\item{...}{\code{[any]}\cr
+Objects to save}
 
 \item{.compress}{\code{logical(1)}\cr
 Compress output (default: \code{FALSE})}
@@ -22,7 +19,7 @@ A named list that contains path information about the current script.
 \description{
 Add a call to this functions as last statement to each of your scripts,
 using double-colon notation (\code{darn::done()}).  A script without such a
-call is considered to have no output and cannot be a dependency of another
+call is considered to have no output and cannot be a prerequisite of another
 script.
 }
 

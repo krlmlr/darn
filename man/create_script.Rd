@@ -13,7 +13,7 @@ create_script(root_dir, filename = "darn.R")
 The file name of the script to be created}
 }
 \description{
-The scripts will be run in an order that guarantees that all dependencies
+The scripts will be run in an order that guarantees that all prerequisites
 are available when needed.
 }
 

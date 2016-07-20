@@ -27,7 +27,7 @@ create_makefile <- function(
   script = NULL) {
 
   my_formals <- formals()
-  my_formals$script <- paste0("R -e \"", run_call("$<"), "\"")
+  my_formals$script <- paste0("R -q -e \"", run_call("$<"), "\"")
 
   if (is.null(script))
     script <- my_formals$script
@@ -40,7 +40,8 @@ create_makefile <- function(
     config_file <-
       MakefileR::makefile() +
       MakefileR::make_comment("This file contains the configuration of the R script network.") +
-      create_config_group(dep_file_name, src_dir, out_dir, env_vars, script)
+      create_config_group(dep_file_name, src_dir, out_dir, env_vars, script,
+                          define_config_vars = TRUE)
     MakefileR::write_makefile(config_file, config_path)
   } else {
     warning("Not overwriting config file ", config_path, call. = FALSE)
@@ -57,33 +58,34 @@ create_makefile <- function(
 
     MakefileR::make_group(
       MakefileR::make_comment("Configuration, and default values"),
-      MakefileR::make_text(paste0("include ", CONFIG_FILE_NAME)),
+      MakefileR::make_text(paste0("-include ", CONFIG_FILE_NAME)),
       create_config_group(dep_file_name = my_formals$dep_file_name,
                           src_dir = my_formals$src_dir,
                           out_dir = my_formals$out_dir,
                           env_vars = my_formals$env_vars,
                           script =  my_formals$script,
-                          operator = "?=")
+                          define_config_vars = FALSE)
     ) +
 
-    MakefileR::make_comment("This makes sure that the dependencies are created initially, and updated with each invocation") +
-    MakefileR::make_rule(R_FILE_TARGETS, "${dep_file_name}") +
+    MakefileR::make_comment("This makes sure that the dependency file is created initially, and updated with each invocation") +
     MakefileR::make_rule(
       targets = "${dep_file_name}",
       deps = c("${src_dir}", "$(wildcard ${src_dir}/*.R)", "$(wildcard ${src_dir}/*.r)"),
       script = paste0(
-        "Rscript -e \"", PACKAGE_NAME, "::",
+        "R -q -e \"", PACKAGE_NAME, "::",
         as.character(quote(create_dep_file)),
         "('.', '$@', '${src_dir}')\"")) +
 
-    MakefileR::make_comment("This defines the dependencies between the R scripts") +
+    MakefileR::make_comment("This file defines the dependencies between the R scripts") +
     MakefileR::make_text("include ${dep_file_name}")
 
   MakefileR::write_makefile(make_file, file_path(root_dir, file_name))
 }
 
 create_config_group <- function(dep_file_name, src_dir, out_dir, env_vars,
-                                script, operator = "=") {
+                                script, ..., define_config_vars) {
+  operator <- "?="
+
   ret <- MakefileR::make_group(
     MakefileR::make_def("dep_file_name", dep_file_name, operator),
     MakefileR::make_def("src_dir", src_dir, operator),
@@ -92,7 +94,7 @@ create_config_group <- function(dep_file_name, src_dir, out_dir, env_vars,
     MakefileR::make_def("script", script, operator)
   )
 
-  if (operator == "=" && length(env_vars) > 0L) {
+  if (define_config_vars) {
     ret <- ret + MakefileR::make_group(
       MakefileR::make_comment("Default values for configuration variables"),
       .dots = mapply(MakefileR::make_def, names(env_vars), env_vars,
