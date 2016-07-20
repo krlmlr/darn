@@ -68,7 +68,7 @@ create_deps_rules <- function(root_dir, src_dir = root_dir) {
     }
   )
 
-  purrr::reduce(c(simple_rules, dep_rules_simple, dep_rules_rdx, process_rules_comment, process_rules),
+  purrr::reduce(c(dep_rules_simple, simple_rules, dep_rules_rdx, process_rules_comment, process_rules),
                 `+`, .init = init)
 }
 
