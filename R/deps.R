@@ -22,6 +22,7 @@ create_deps_rules <- function(root_dir, src_dir = root_dir) {
   init <-
     MakefileR::makefile() +
     MakefileR::make_group(
+      MakefileR::make_comment("Universal rules"),
       .dots = lapply(simple_from_r(web, names(deps)), MakefileR::make_rule, targets = "all"))
 
   simple_rules <- list(MakefileR::make_group(
@@ -67,7 +68,7 @@ create_deps_rules <- function(root_dir, src_dir = root_dir) {
     }
   )
 
-  purrr::reduce(c(simple_rules, dep_rules_simple, dep_rules_rdx, process_rules_comment, process_rules),
+  purrr::reduce(c(dep_rules_simple, simple_rules, dep_rules_rdx, process_rules_comment, process_rules),
                 `+`, .init = init)
 }
 
