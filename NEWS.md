@@ -1,3 +1,18 @@
+# darn 0.3-3 (2016-07-20)
+
+- First draft of vignette.
+- New `get_target_path()`, calls `file.path()` for `get_target_dir()`.
+- Don't export `init_()` and `done_()`.
+- Consistently use `R -q` instead of `Rscript` in the `Makefile`.
+- Improve documentation for `init()` and `done()`.
+- Improve order of entries in `Dependencies` file.
+- Terminology: Prerequisites vs. dependencies.
+- Variables specified in `Darnfile` are always overridable via environment variables.
+- `Darnfile` is optional.
+- Specify packages ahead of CRAN in `Remotes`.
+- `R CMD check` passes.
+
+
 # darn 0.3-2 (2016-07-12)
 
 - Add simple targets (without path or extension) to `Dependencies` (#33).
