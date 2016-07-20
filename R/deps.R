@@ -22,6 +22,7 @@ create_deps_rules <- function(root_dir, src_dir = root_dir) {
   init <-
     MakefileR::makefile() +
     MakefileR::make_group(
+      MakefileR::make_comment("Universal rules"),
       .dots = lapply(simple_from_r(web, names(deps)), MakefileR::make_rule, targets = "all"))
 
   simple_rules <- list(MakefileR::make_group(
