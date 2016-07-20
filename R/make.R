@@ -57,7 +57,7 @@ create_makefile <- function(
 
     MakefileR::make_group(
       MakefileR::make_comment("Configuration, and default values"),
-      MakefileR::make_text(paste0("include ", CONFIG_FILE_NAME)),
+      MakefileR::make_text(paste0("-include ", CONFIG_FILE_NAME)),
       create_config_group(dep_file_name = my_formals$dep_file_name,
                           src_dir = my_formals$src_dir,
                           out_dir = my_formals$out_dir,
