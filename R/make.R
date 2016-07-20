@@ -27,7 +27,7 @@ create_makefile <- function(
   script = NULL) {
 
   my_formals <- formals()
-  my_formals$script <- paste0("R -e \"", run_call("$<"), "\"")
+  my_formals$script <- paste0("R -q -e \"", run_call("$<"), "\"")
 
   if (is.null(script))
     script <- my_formals$script
@@ -72,7 +72,7 @@ create_makefile <- function(
       targets = "${dep_file_name}",
       deps = c("${src_dir}", "$(wildcard ${src_dir}/*.R)", "$(wildcard ${src_dir}/*.r)"),
       script = paste0(
-        "Rscript -e \"", PACKAGE_NAME, "::",
+        "R -q -e \"", PACKAGE_NAME, "::",
         as.character(quote(create_dep_file)),
         "('.', '$@', '${src_dir}')\"")) +
 
