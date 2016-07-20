@@ -67,7 +67,6 @@ create_makefile <- function(
     ) +
 
     MakefileR::make_comment("This makes sure that the dependencies are created initially, and updated with each invocation") +
-    MakefileR::make_rule(R_FILE_TARGETS, "${dep_file_name}") +
     MakefileR::make_rule(
       targets = "${dep_file_name}",
       deps = c("${src_dir}", "$(wildcard ${src_dir}/*.R)", "$(wildcard ${src_dir}/*.r)"),
