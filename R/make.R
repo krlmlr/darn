@@ -40,7 +40,8 @@ create_makefile <- function(
     config_file <-
       MakefileR::makefile() +
       MakefileR::make_comment("This file contains the configuration of the R script network.") +
-      create_config_group(dep_file_name, src_dir, out_dir, env_vars, script)
+      create_config_group(dep_file_name, src_dir, out_dir, env_vars, script,
+                          define_config_vars = TRUE)
     MakefileR::write_makefile(config_file, config_path)
   } else {
     warning("Not overwriting config file ", config_path, call. = FALSE)
@@ -63,7 +64,7 @@ create_makefile <- function(
                           out_dir = my_formals$out_dir,
                           env_vars = my_formals$env_vars,
                           script =  my_formals$script,
-                          operator = "?=")
+                          define_config_vars = FALSE)
     ) +
 
     MakefileR::make_comment("This makes sure that the dependencies are created initially, and updated with each invocation") +
@@ -82,7 +83,9 @@ create_makefile <- function(
 }
 
 create_config_group <- function(dep_file_name, src_dir, out_dir, env_vars,
-                                script, operator = "=") {
+                                script, ..., define_config_vars) {
+  operator <- "?="
+
   ret <- MakefileR::make_group(
     MakefileR::make_def("dep_file_name", dep_file_name, operator),
     MakefileR::make_def("src_dir", src_dir, operator),
@@ -91,7 +94,7 @@ create_config_group <- function(dep_file_name, src_dir, out_dir, env_vars,
     MakefileR::make_def("script", script, operator)
   )
 
-  if (operator == "=" && length(env_vars) > 0L) {
+  if (define_config_vars) {
     ret <- ret + MakefileR::make_group(
       MakefileR::make_comment("Default values for configuration variables"),
       .dots = mapply(MakefileR::make_def, names(env_vars), env_vars,
