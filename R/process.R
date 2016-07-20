@@ -1,26 +1,3 @@
-#' Init a stage
-#'
-#' Add a call to this functions as first statement to each of your scripts,
-#' using double-colon notation (\code{darn::init()}).  A script without such a
-#' call is considered to have no prerequisites.
-#'
-#' @param ... [character(1)]\cr
-#'   Prerequisites, without path or extension
-#' @name init
-#' @inheritParams init_
-NULL
-
-#' @export
-#' @param .dots \code{[list]}\cr
-#'   Additional dependencies as list
-#' @param env_vars \code{[character]}\cr
-#'   Environment variables that define the configuration of the script
-#' @param envir \code{[environment]}\cr
-#'   Environment to load the data into. Default: parent frame.
-#' @param path \code{[character(1)]}\cr
-#'   The path of the current script, useful if automatic detection fails.
-#' @return A named list that contains path information about the current script.
-#' @rdname init
 init_ <- function(..., .dots = NULL, env_vars = NULL,
                   envir = parent.frame(), path = NULL) {
   path_info <- get_path_info(path)
@@ -112,6 +89,31 @@ init_one <- function(r_file_name, deps, path_info, envir) {
 
   lazyLoad(rdx_base, envir = envir)
 }
+
+#' Init a stage
+#'
+#' Add a call to this functions as first statement to each of your scripts,
+#' using double-colon notation (\code{darn::init()}).  A script without such a
+#' call is considered to have no prerequisites.
+#'
+#' @param ... [character(1)]\cr
+#'   Prerequisites, without path or extension
+#' @name init
+#' @inheritParams init_
+NULL
+
+#' @export
+#' @param .dots \code{[list]}\cr
+#'   Additional dependencies as list
+#' @param env_vars \code{[character]}\cr
+#'   Environment variables that define the configuration of the script
+#' @param envir \code{[environment]}\cr
+#'   Environment to load the data into. Default: parent frame.
+#' @param path \code{[character(1)]}\cr
+#'   The path of the current script, useful if automatic detection fails.
+#' @return A named list that contains path information about the current script.
+#' @rdname init
+"init_"
 
 #' @export
 #' @name init
