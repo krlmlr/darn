@@ -67,7 +67,7 @@ create_makefile <- function(
                           define_config_vars = FALSE)
     ) +
 
-    MakefileR::make_comment("This makes sure that the dependencies are created initially, and updated with each invocation") +
+    MakefileR::make_comment("This makes sure that the dependency file is created initially, and updated with each invocation") +
     MakefileR::make_rule(
       targets = "${dep_file_name}",
       deps = c("${src_dir}", "$(wildcard ${src_dir}/*.R)", "$(wildcard ${src_dir}/*.r)"),
@@ -76,7 +76,7 @@ create_makefile <- function(
         as.character(quote(create_dep_file)),
         "('.', '$@', '${src_dir}')\"")) +
 
-    MakefileR::make_comment("This defines the dependencies between the R scripts") +
+    MakefileR::make_comment("This file defines the dependencies between the R scripts") +
     MakefileR::make_text("include ${dep_file_name}")
 
   MakefileR::write_makefile(make_file, file_path(root_dir, file_name))
