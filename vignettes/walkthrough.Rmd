@@ -1,58 +1,174 @@
 ---
-title: "Vignette Title"
-author: "Vignette Author"
+title: "Walkthrough"
+author: "Kirill Müller"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteIndexEntry{Walkthrough}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
-Vignettes are long form documentation commonly included in packages. Because they are part of the distribution of the package, they need to be as compact as possible. The `html_vignette` output type provides a custom style sheet (and tweaks some options) to ensure that the resulting html is as small as possible. The `html_vignette` format:
+The `darn` package allows the definition of Directed Acyclic R script Networks.
+A DARN is a collection of R scripts where each can have a (possibly empty)
+set of prerequisites (other scripts that must be run before, and whose output is processed further).
+Each R script also defines a (possibly empty) set of R objects
+which are exported for use by the dependent scripts.
+Unlike `remake` and other approaches, the dependencies are declared directly in the R scripts.
+By design, each script can also be run individually, unchanged.
+This makes it particularly easy to develop data preparation and analysis scripts
+interactively, and then effortlessly integrate them in the script network
+without worrying too much about interdependencies.
 
-- Never uses retina figures
-- Has a smaller default figure size
-- Uses a custom CSS stylesheet instead of the default Twitter Bootstrap style
+Each R script declares its prerequisites via a call to `darn::init()`,
+and its outputs via a call to `darn::done()`;
+the latter is mandatory to make the script part of the DARN.
+A `Makefile` can be created from these implicit dependencies.
+Running `make` only runs those scripts that are newer than their outputs,
+i.e., only does as much as necessary to build the entire project.
+New, modified or deleted scripts are detected,
+and the dependencies are updated accordingly.
 
-## Vignette Info
+This vignette shows how to create, run, and update such a DARN.
 
-Note the various macros within the `vignette` section of the metadata block above. These are required in order to instruct R how to build the vignette. Note that you should change the `title` field and the `\VignetteIndexEntry` to match the title of your vignette.
 
-## Styles
+## Creation
 
-The `html_vignette` template includes a basic CSS theme. To override this theme you can specify your own CSS in the document metadata as follows:
+We create our DARN in a temporary directory.
 
-    output: 
-      rmarkdown::html_vignette:
-        css: mystyles.css
-
-## Figures
-
-The figure sizes have been customised so that you can easily put two images side-by-side. 
-
-```{r, fig.show='hold'}
-plot(1:10)
-plot(10:1)
+```{r}
+(root <- tempfile("darn"))
+dir.create(root)
+knitr::opts_knit$set(root.dir = root)
 ```
 
-You can enable figure captions by `fig_caption: yes` in YAML:
+A DARN is defined by:
 
-    output:
-      rmarkdown::html_vignette:
-        fig_caption: yes
+- a configuration file, the `Darnfile`, configurable by the user
+- a `Makefile` which is designed to run independently but will read the options defined in the `Darnfile` if it exists; normally, the user shouldn't need to edit this file
+- a `Dependencies` file, which is automatically generated and kept up to date; the user should never edit this file
 
-Then you can use the chunk option `fig.cap = "Your figure caption."` in **knitr**.
+The structure is created by a call to `create_makefile()`.
 
-## More Examples
-
-You can write math expressions, e.g. $Y = X\beta + \epsilon$, footnotes^[A footnote here.], and tables, e.g. using `knitr::kable()`.
-
-```{r, echo=FALSE, results='asis'}
-knitr::kable(head(mtcars, 10))
+```{r}
+darn::create_makefile(".")
 ```
 
-Also a quote using `>`:
+```{bash}
+cat Makefile
+```
 
-> "He who gives up [code] safety for [code] speed deserves neither."
-([via](https://twitter.com/hadleywickham/status/504368538874703872))
+```{bash}
+cat Darnfile
+```
+
+An invocation of `make` succeeds and creates a `Dependencies` file,
+which currently contains only comments.
+
+```{bash}
+make
+```
+
+```{bash}
+cat Dependencies
+```
+
+
+## Adding scripts
+
+For starters, our network of R scripts will contain two simple scripts, `a.R` and `b.R`,
+the latter depends on the former:
+
+```{r}
+setwd(root)
+writeLines(c(
+  "print('Defining a_result')",
+  "a_result <- 42",
+  "darn::done(a_result)"),
+  "a.R")
+
+writeLines(c(
+  "darn::init('a')",
+  "print(a_result)",
+  "darn::done()"),
+  "b.R")
+```
+
+The first script computes a variable `a_result` (and talks about it), which is exported and then
+consumed by the second script.
+
+
+## Running the DARN
+
+Running `make` will update the `Dependencies` and run the scripts in the correct order.
+By default, the scripts are run with the `ezknitr` package,
+the output is a HTML file with all results and plots embedded.
+In this vignette, the `script` variable is overridden to embed the results in the vignette.
+
+```{bash}
+script="R -q -e "'"'"darn::run(file = '$<', source, echo = TRUE)"'"' make
+```
+
+```{bash}
+cat Dependencies
+```
+
+Running a particular script (and all of its dependencies) is supported,
+the scripts will be executed only if necessary:
+
+```{bash}
+make a
+```
+
+Use the `-B` or `--always-make` switch to override:
+
+```{bash}
+make --always-make b
+```
+
+
+## Interactive operation
+
+The same results are obtained by simply sourcing the script.
+In particular, any missing prerequisites will be built automatically.
+
+```{bash}
+rm *.rdb *.rdx
+```
+
+```{r}
+source("b.R", echo = TRUE)
+```
+
+
+## Working with the code
+
+From here on, the scripts in the network can be edited, or new scripts can be added.
+If a script contains a call to `darn::done()` as a top-level expression,
+it will be part of the network and built automatically when calling `make`.
+A caveat: The calls to `darn::init()` and `darn::done()` use heuristics to determine the name of the current file when it is sourced,
+this obviously cannot work if these calls are sourced line by line (e.g., via Ctrl+Enter in RStudio).
+In interactive mode, I tend to insert code that will raise an error when run,
+and source the script entirely;
+execution stops when reaching that manually inserted breakpoint.
+Alternatively, explicitly specifying the path to the script
+(relative to the root where the `Darnfile` lives)
+via the `path` argument to `darn::init()` and `darn::done()`
+helps working around this problem.
+
+
+## Features not yet documented
+
+- Different source directory
+- Different target directory
+- Configuration variables (aka build matrix)
+- Custom configuration and rules in `Darnfile`
+- Data storage for intermediate results: R database
+    - lazy-load
+    - object size < 2 GB (or 4 GB)
+- Auxiliary output
+    - Write and read as necessary
+    - `get_target_dir()`
+- Other functions
+    - `dep_graph()`
+    - `create_script()`
