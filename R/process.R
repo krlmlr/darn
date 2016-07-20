@@ -113,6 +113,7 @@ init_one <- function(r_file_name, deps, path_info, envir) {
 }
 
 #' @export
+#' @name init
 #' @inheritParams init_
 #' @importFrom lazyforward lazyforward
 init <- lazyforward("init_")
@@ -151,6 +152,7 @@ get_done_dots <- function(.dots, ...) {
 }
 
 #' @export
+#' @name done
 #' @inheritParams done_
 #' @importFrom lazyforward lazyforward
 done <- lazyforward("done_")
