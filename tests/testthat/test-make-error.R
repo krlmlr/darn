@@ -1,4 +1,4 @@
-context("make-env")
+context("make-error")
 
 withr::with_libpaths(future::value(temp_lib), action = "prefix", {
   test_that("errors in source file are propagated when using make", {
